@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUNÉ Beauty Studio — Catálogo</title>
+<style>
+@layer reset, tokens, base, components, page, print;
+@layer reset{
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%;text-size-adjust:100%;} html,body{margin:0;min-height:100%;} button,input{font:inherit} img{display:block;max-width:100%;}
+}
+@layer tokens{
+:root{
+  --ink:#141318; --muted:#55555f; --line:#b9b9bf; --pink:#edc7dc; --pink-soft:#f5e3ed; --lav:#e8dcf0;
+  --paper:#fff; --card:#fbfafb; --page-w:1320px; --page-h:1020px;
+  --sans:"Montserrat", "Avenir Next", "Segoe UI", sans-serif;
+  --serif:"Bodoni 72", "Didot", "Bodoni MT", Georgia, serif;
+  --script:"Brush Script MT", "Segoe Script", cursive;
+}
+}
+@layer base{
+
+body{background:#dcd9dc;color:var(--ink);font-family:var(--sans);}
+button{border:0;background:none;cursor:pointer}
+.app{min-height:100vh;padding:20px;display:grid;place-items:center}
+.toolbar{position:fixed;top:14px;right:14px;z-index:50;display:flex;gap:6px;padding:6px;background:#ffffffde;border:1px solid #c9c5ca;border-radius:12px;backdrop-filter:blur(8px);box-shadow:0 8px 30px #0001}
+.toolbar button{padding:8px 12px;border-radius:8px;color:#3d3941;font-size:12px;letter-spacing:.08em}.toolbar button[aria-current="page"]{background:#f0d5e4;color:#201b20}
+.listing{display:flex;flex-direction:column;gap:12px;height:100%;min-height:0}
+.listing>.grid,.listing>.tool-grid{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#e0c6d4 transparent;padding-right:4px;grid-template-rows:none!important;grid-auto-rows:max-content}
+.listing>.grid::-webkit-scrollbar,.listing>.tool-grid::-webkit-scrollbar{width:6px}
+.listing>.grid::-webkit-scrollbar-thumb,.listing>.tool-grid::-webkit-scrollbar-thumb{background:#e0c6d4;border-radius:6px}
+.listing>.grid::-webkit-scrollbar-track,.listing>.tool-grid::-webkit-scrollbar-track{background:transparent}
+.listing-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.listing-count{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#8a7a86}
+.view-toggle{display:inline-flex;align-items:center;gap:3px;padding:4px;background:#f4edf1;border:1px solid #ecdee7;border-radius:13px}
+.view-toggle button{width:32px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#9a8b95;transition:background .25s ease,color .25s ease,transform .15s ease;-webkit-tap-highlight-color:transparent}
+.view-toggle button svg{width:16px;height:16px;fill:currentColor}
+.view-toggle button:hover{color:#4c4852}
+.view-toggle button[aria-current="true"]{background:#fff;color:#a54c78;box-shadow:0 4px 10px #00000018}
+.view-toggle button:active{transform:scale(.9)}
+.viewer{width:min(96vw,1400px);padding-top:40px}.sheet{width:100%;aspect-ratio:11/8.5;background:var(--paper) center/cover no-repeat;box-shadow:0 30px 80px #0002;position:relative;overflow:hidden}.sheet{background-image:url('assets/fondo_c.png')}
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+}
+@layer components{
+.page-grid{position:absolute;inset:0;display:grid;grid-template-columns:100%;grid-template-rows:9% 83% 8%;}
+.content{grid-column:1;grid-row:1/-1;display:grid;grid-template-rows:9% 20% 63% 8%;padding:0 3.2%;position:relative;z-index:1}
+.topline{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:8px;letter-spacing:.42em;color:#4b4a52;text-transform:uppercase}
+.topline .page-no{letter-spacing:.34em}
+.brand-logo{height:26px;width:auto;object-fit:contain;display:block}
+.hero{display:grid;grid-template-columns:54% 28% 18%;align-items:center;gap:2.5%}
+.category{font-size:12px;letter-spacing:.42em;color:#d19abb;text-transform:uppercase;margin-bottom:4px}.title{font:400 clamp(40px,4.1vw,76px)/.88 var(--serif);letter-spacing:-.045em;margin:0;white-space:nowrap}.lead{font-size:13px;line-height:1.45;color:#56545f;max-width:330px;padding-left:22px;border-left:1px solid #777}
+.hero-promo{height:55%;border-radius:70px;background:#f0d6e5;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 26px}.hero-promo .dash{width:36px;height:1px;background:#7c7480}.hero-promo span{font-size:8px;line-height:2;letter-spacing:.34em;color:#55505a;text-transform:uppercase}
+.grid{display:grid;gap:16px;align-content:start}.grid.six{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,auto);align-items:start}
+.card{background:linear-gradient(180deg,#f9f7f8,#fdfcfd);border-radius:12px;position:relative;overflow:visible;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:stretch;min-height:0}.card .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}.card .photo img{height:96%;width:96%;object-fit:contain;filter:drop-shadow(0 10px 8px #0001)}.info{padding:8% 4% 2% 4%;display:flex;flex-direction:column;min-width:0}.code{align-self:flex-start;background:#f3dce8;padding:5px 14px;border-radius:30px;font-size:9px;letter-spacing:.18em}.name{font-size:18px;font-weight:500;line-height:1.1;margin:13px 0 2px;letter-spacing:.015em}.size{font-size:13px;margin:0 0 18px}.desc{font-size:10px;line-height:1.45;color:#62616b;margin:0 0 14px}.price{margin-top:auto;align-self:flex-start;max-width:100%;text-align:center;background:#efd0e0;border-radius:28px;padding:8px 16px;font-size:18px;font-weight:500;white-space:nowrap}.swatch{width:40px;height:100px;border-radius:30px;box-shadow:inset 10px 0 14px #fff3, inset -10px 0 10px #0001}.swatch.big{width:42px;height:150px;margin:0 auto 6px}.nail{width:42px;height:62px;display:block;filter:drop-shadow(0 3px 2px #0002)}.nail path{fill:var(--nail-color);stroke:#ffffff88;stroke-width:2}.benefits{display:grid;grid-template-columns:repeat(4,1fr) 1.4fr;gap:18px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.benefit{display:flex;align-items:center;justify-content:center;gap:12px}.icon{width:54px;height:54px;border:1px solid #d4a0bf;border-radius:50%;display:grid;place-items:center;font-size:23px}.benefit p{margin:0;font-size:8px;line-height:1.8;letter-spacing:.31em;color:#67636c;text-transform:uppercase}.quote{border-left:1px solid #bbb;padding-left:28px;font:italic 28px/1.05 var(--script);color:#b981a7;text-align:center}
+.footer{display:flex;align-items:center;justify-content:space-between;font-size:8px;letter-spacing:.38em;color:#55505b;text-transform:uppercase}.footer .line{flex:1;height:1px;background:#aaa;margin:0 28px}
+/* Overview / page 05 */
+.overview .content{grid-template-rows:9% 20% 56% 15%}.overview-main{display:grid;grid-template-columns:34% 66%;gap:16px;background:#faf8fa;border-radius:12px;padding:16px;align-items:start}.miracle{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:stretch}.miracle .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}.miracle .photo img{height:96%;width:96%;object-fit:contain}.miracle-info{padding:4% 2%;display:flex;flex-direction:column}.pill{display:inline-block;align-self:flex-start;background:#f0d0e2;border-radius:25px;padding:8px 18px;font-size:14px;letter-spacing:.08em}.miracle-info h2{font-size:20px;margin:14px 0 2px;font-weight:500}.miracle-info .size{margin-bottom:18px}.miracle-info .desc{font-size:11px;margin-bottom:14px}.swatch-wall{display:grid;grid-template-columns:repeat(10,1fr);gap:10px 8px;align-content:center;padding:10px}.swatch-cell{text-align:center;font-size:7px}.swatch-cell .nail{width:100%;height:52px}.tone-panel{background:#f2dde8;border-radius:12px;padding:20px 18px;display:flex;flex-direction:column;gap:10px}.tone-panel h3{font-size:12px;letter-spacing:.2em;line-height:1.4;margin:0;text-transform:uppercase}.tone-panel hr{width:100%;border:0;border-top:1px solid #b8a8b2;margin:4px 0}.tone-panel p{font-size:10px;line-height:1.45;color:#5f5963;margin:0}.mini-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}.mini-card{background:#fdfcfd;border-radius:12px;padding:10px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:stretch;min-height:210px}.mini-card .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}.mini-card .photo img{height:96%;width:96%;object-fit:contain}.mini-info{padding:4%;display:flex;flex-direction:column}.mini-code{align-self:flex-start;background:#f3dce8;padding:3px 10px;border-radius:20px;font-size:7px;letter-spacing:.14em;margin-bottom:5px}.mini-info h3{font-size:11px;margin:2px 0 3px}.mini-info p{font-size:8px;margin:0 0 6px}.mini-desc{color:#726c78;line-height:1.4}.mini-swatches{display:flex;gap:3px;align-items:end}.mini-swatches .nail{width:23px;height:42px}.mini-price{margin-top:auto;align-self:flex-start;display:inline-block;background:#efd0e0;border-radius:25px;padding:6px 10px;font-size:12px}
+/* cover / home page — Instagram bio-link style */
+.cover .content{grid-template-rows:9% 30% 50% 11%}
+.cover-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.cover-logo{height:72px;width:auto;filter:drop-shadow(0 14px 22px #00000018)}
+.cover-tagline{font-size:12px;letter-spacing:.05em;color:var(--muted);max-width:440px;line-height:1.65;margin:0}
+.brand-word{font-weight:600}
+.cover-links{display:flex;flex-direction:column;justify-content:center;gap:14px;height:100%;max-width:560px;margin:0 auto;width:100%}
+.link-item{position:relative;border:1px solid #ffffffa8;cursor:pointer;border-radius:20px;padding:16px 20px;display:flex;align-items:center;gap:16px;text-align:left;background:#fffdfe;box-shadow:0 8px 22px #00000010;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease;-webkit-tap-highlight-color:transparent}
+.link-item:hover,.link-item:focus-visible{transform:translateY(-4px);box-shadow:0 18px 32px #0000001c}
+.link-item:active{transform:translateY(-1px) scale(.99)}
+.link-item:focus-visible{outline:2px solid #d19abb;outline-offset:3px}
+.link-icon{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.link-icon svg{width:22px;height:22px}
+.link-esmaltes .link-icon{background:linear-gradient(160deg,#f8e6f0,#f0d0e2);color:#a54c78}
+.link-colecciones .link-icon{background:linear-gradient(160deg,#ede2f5,#e0cdee);color:#7454a3}
+.link-herramientas .link-icon{background:linear-gradient(160deg,#f2ece0,#e7dbc8);color:#8a6a34}
+.link-text{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.link-title{font:400 21px/1 var(--serif);letter-spacing:-.01em;color:var(--ink)}
+.link-sub{font-size:10.5px;letter-spacing:.01em;color:#736f79;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-arrow{flex:none;font-size:16px;color:#8a7a86;transition:transform .3s ease}
+.link-item:hover .link-arrow{transform:translateX(5px);color:#4c4852}
+.cover-footer{border-top:1px solid var(--line);padding-top:12px}
+/* tools page */
+.tools .content{grid-template-rows:9% 16% 68% 7%}.tools .hero{grid-template-columns:54% 28% 18%}.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,auto);gap:16px;align-items:start;align-content:start}.tool-card{background:linear-gradient(180deg,#faf9fa,#fff);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:stretch;overflow:visible}.tool-card .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}.tool-card .photo img{width:96%;height:96%;object-fit:contain}.tool-info{padding:8% 3% 2%;display:flex;flex-direction:column;min-width:0}.tool-info h3{font-size:13.5px;line-height:1.15;margin:12px 0 6px;font-weight:500;overflow-wrap:anywhere}.tool-info p{font-size:10px;line-height:1.45;color:#62616b;margin:0 0 14px;overflow-wrap:anywhere}.tool-info .price{font-size:16px;min-width:0;width:100%}
+}
+@layer page{
+.sheet[data-page="04"] .card:nth-child(1) .swatch{background:linear-gradient(145deg,#d97791,#efb0c4)}
+.sheet[data-page="04"] .card:nth-child(2) .swatch{background:linear-gradient(145deg,#c99bd4,#e3c7ed)}
+.sheet[data-page="04"] .card:nth-child(3) .swatch{background:linear-gradient(145deg,#dc9a8e,#f2c0b5)}
+.sheet[data-page="04"] .card:nth-child(4) .swatch{background:linear-gradient(145deg,#9b173a,#e31b49)}
+.sheet[data-page="04"] .card:nth-child(5) .swatch{background:linear-gradient(145deg,#c9a18c,#e4c4b3)}
+.sheet[data-page="04"] .card:nth-child(6) .swatch{background:linear-gradient(145deg,#9b597c,#ca8fac)}
+.sheet[data-page="06"] .hero-promo{background:#efdae7}
+/* overview swatches */
+.sw01{background:linear-gradient(145deg,#eed4d5,#f4e3e3)}.sw02{background:linear-gradient(145deg,#e8c0d0,#f2cbd4)}.sw03{background:linear-gradient(145deg,#d9b0b0,#ebcdcc)}.sw04{background:linear-gradient(145deg,#8d0f2f,#cf143d)}.sw05{background:linear-gradient(145deg,#bd9b8f,#d8beb0)}.sw06{background:linear-gradient(145deg,#a55f82,#cc9ab5)}.sw07{background:linear-gradient(145deg,#f1d8dd,#f7e7eb)}.sw08{background:linear-gradient(145deg,#dbb7e0,#ecd6ef)}.sw09{background:linear-gradient(145deg,#a78297,#cba6b6)}.sw10{background:linear-gradient(145deg,#c97b8c,#e9b2be)}.sw11{background:linear-gradient(145deg,#ef9eaf,#f7c2cc)}.sw12{background:linear-gradient(145deg,#ef7e93,#f4b1bd)}.sw13{background:linear-gradient(145deg,#d6526b,#eb7e8e)}.sw14{background:linear-gradient(145deg,#c92848,#ec526b)}.sw15{background:linear-gradient(145deg,#c60022,#ea304c)}.sw16{background:linear-gradient(145deg,#ab001d,#d91f39)}.sw17{background:linear-gradient(145deg,#8b0c19,#a82b35)}.sw18{background:linear-gradient(145deg,#70111f,#9b2b37)}.sw19{background:linear-gradient(145deg,#5e1023,#7a293e)}.sw20{background:linear-gradient(145deg,#b90024,#df214a)}.sw21{background:linear-gradient(145deg,#a979bd,#caa8dc)}.sw22{background:linear-gradient(145deg,#8e69a7,#c8abdd)}.sw23{background:linear-gradient(145deg,#a97fb4,#d0a7d5)}.sw24{background:linear-gradient(145deg,#7c4458,#a56b82)}.sw25{background:linear-gradient(145deg,#4a162b,#6e203d)}.sw26{background:radial-gradient(circle at 40% 35%,#f3c5dd 0 12%,transparent 14%),linear-gradient(145deg,#bb6c87,#d9a0b7)}.sw27{background:radial-gradient(circle at 60% 35%,#f0d5de 0 12%,transparent 14%),linear-gradient(145deg,#a78995,#cbb6be)}.sw28{background:linear-gradient(145deg,#3f1b2c,#6a324b)}.sw29{background:linear-gradient(145deg,#91817e,#bdb2ad)}.sw30{background:linear-gradient(145deg,#161616,#343434)}
+}
+@layer print{
+@media print{
+  body{background:#fff}.app{padding:0}.toolbar{display:none}.viewer{width:auto;padding:0}.sheet{width:11in;height:8.5in;aspect-ratio:auto;box-shadow:none;page-break-after:always}
+  @page{size:Letter landscape;margin:0}
+}
+}
+</style>
+<style>
+@media (max-width:760px){
+body{background:#fff}.app{padding:0;display:block}.toolbar{position:sticky;top:8px;right:auto;width:max-content;margin:8px 8px 0 auto}.toolbar button{padding:7px 9px;font-size:10px}.viewer{width:100%;padding:0}.sheet{width:100%;aspect-ratio:auto;min-height:100vh;box-shadow:none;overflow:visible}.page-grid{position:relative;display:block}.sidebar{height:34px;overflow:hidden}.sidebar-bg{opacity:.38;object-position:left 36%}.sidebar::after{background:#f5edf8cc}.sidebar-content{padding:8px 18px;justify-content:center}.brand{width:110px;margin:0}.side-rule,.side-kicker,.side-bottom{display:none}.content,.overview .content,.tools .content{display:block;padding:0 18px}.topline{height:54px;font-size:7px}.hero{display:block;padding:20px 0 24px}.category{font-size:10px}.title{font-size:clamp(26px,9vw,54px);white-space:normal;line-height:.95}.lead{border:0;padding:10px 0 0;font-size:12px}.hero-promo{display:none}.listing{gap:10px;height:auto}.listing-head{margin:2px 0 0}.listing-count{font-size:8px;letter-spacing:.22em}.view-toggle{padding:3px}.view-toggle button{width:34px;height:32px}.view-toggle button svg{width:15px;height:15px}body[data-cols="1"] .grid.six,body[data-cols="1"] .tool-grid,body[data-cols="1"] .mini-row{grid-template-columns:1fr}.grid.six,.tool-grid,.mini-row{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;gap:10px;align-items:start}.card,.tool-card,.mini-card{padding:10px;grid-template-columns:1fr}.card .photo,.tool-card .photo,.mini-card .photo{aspect-ratio:1/1!important;height:auto!important;width:100%!important}.info,.tool-info{padding:3px 0 0}.code{font-size:8px;padding:4px 10px}.name,.tool-info h3{font-size:14px;margin:8px 0 2px}.size{font-size:11px;margin-bottom:8px}.desc,.tool-info p{font-size:9px;line-height:1.35}.price,.tool-info .price{font-size:14px;min-width:0;width:100%;padding:7px 8px}.footer{margin-top:22px;min-height:52px;font-size:6px;letter-spacing:.23em}.footer .line{margin:0 10px}.overview-main{grid-template-columns:1fr;padding:12px;gap:12px}.miracle{grid-template-columns:42% 58%}.miracle-info h2{font-size:18px}.swatch-wall{grid-template-columns:repeat(6,1fr);gap:8px 4px;padding:4px}.swatch-cell .nail{height:45px}.tone-panel{padding:14px}.mini-row{margin-top:10px}.mini-card{min-height:150px}.mini-swatches .nail{width:27px;height:42px}.tools .hero{display:block}.tools .tool-grid{margin-top:0}.tools .tool-info{padding-top:4px}
+.cover-hero{padding:24px 0 10px}.cover-logo{height:50px}.cover-tagline{font-size:11.5px;padding:0 12px}.cover-links{gap:12px;padding:0 2px 8px}.link-item{padding:15px 16px;border-radius:18px}.link-icon{width:44px;height:44px;border-radius:12px}.link-icon svg{width:20px;height:20px}.link-title{font-size:19px}.link-sub{font-size:10px;white-space:normal;line-height:1.35}.cover-footer{margin-top:20px}
+body[data-cols="3"] .grid.six,body[data-cols="3"] .tool-grid,body[data-cols="3"] .mini-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body[data-cols="3"] .card,body[data-cols="3"] .tool-card,body[data-cols="3"] .mini-card{padding:7px}
+body[data-cols="3"] .code,body[data-cols="3"] .mini-code{font-size:7px;padding:3px 7px}
+body[data-cols="3"] .name,body[data-cols="3"] .tool-info h3,body[data-cols="3"] .mini-info h3{font-size:10.5px;margin:6px 0 2px}
+body[data-cols="3"] .size,body[data-cols="3"] .mini-size{font-size:8px;margin-bottom:5px}
+body[data-cols="3"] .desc,body[data-cols="3"] .tool-info p,body[data-cols="3"] .mini-desc{font-size:7.5px;line-height:1.3;margin-bottom:7px}
+body[data-cols="3"] .price,body[data-cols="3"] .tool-info .price,body[data-cols="3"] .mini-price{font-size:10px;padding:5px 4px}
+body[data-cols="3"] .mini-swatches{gap:2px}
+body[data-cols="3"] .mini-swatches .nail{width:18px;height:30px}
+}
+.nail{width:46px;height:68px;display:block;filter:drop-shadow(0 4px 3px #0004)}.nail .nail-shadow{fill:#000;opacity:.18;transform:translate(2px,3px)}.nail .nail-surface{stroke:#ffffffa8;stroke-width:1.5}.nail .nail-volume{opacity:.72}.nail .nail-shine{fill:none;stroke:#ffffffb8;stroke-width:5;stroke-linecap:round}.nail .nail-glint{fill:none;stroke:#ffffffa8;stroke-width:2.5;stroke-linecap:round}.nail .nail-cuticle{fill:none;stroke:#ffffffb0;stroke-width:2;stroke-linecap:round}.nail .effect-pearl{fill:#f7f2ff8c}.nail .effect-metal{fill:#ffffff9c}.nail .effect-glitter circle{fill:#fff;opacity:.82}.nail .effect-cat-eye{fill:#f8f5ffcc;filter:drop-shadow(0 0 3px #fff)}.nail .effect-jelly{fill:#fff5;stroke:#fff8;stroke-width:1}
+.mini-row .mini-card:nth-child(n+4){display:none}
+@media (min-width:761px){
+.mini-row{grid-template-columns:repeat(3,1fr);gap:16px}.mini-card{padding:12px}.mini-info h3{font-size:14px}.mini-info p{font-size:10px}.mini-swatches{gap:8px}.mini-swatches .nail{width:30px;height:48px}.mini-price{padding:7px 18px;font-size:14px}
+body[data-cols="2"] .grid.six,body[data-cols="2"] .tool-grid{grid-template-columns:repeat(2,1fr)}
+body[data-cols="2"] .mini-row{grid-template-columns:repeat(2,1fr)}
+body[data-cols="1"] .grid.six,body[data-cols="1"] .tool-grid{grid-template-columns:minmax(0,640px);justify-content:center}
+body[data-cols="1"] .mini-row{grid-template-columns:minmax(0,420px);justify-content:center}
+body[data-cols="1"] .card,body[data-cols="1"] .tool-card{grid-template-columns:auto 1fr;padding:22px}
+body[data-cols="1"] .name,body[data-cols="1"] .tool-info h3{font-size:22px}
+body[data-cols="1"] .desc,body[data-cols="1"] .tool-info p{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="toolbar" aria-label="Navegación del catálogo">
+<button data-target="00" aria-current="page">INICIO</button>
+<button data-target="04">ESMALTES</button>
+<button data-target="05">COLECCIONES</button>
+<button data-target="06">HERRAMIENTAS</button>
+</div>
+<div class="viewer">
+
+<section class="sheet cover" data-page="00" aria-label="Página 00 — Inicio">
+  <div class="page-grid">
+    <main class="content cover-content">
+      <header class="topline"><span class="brand-word">SUPREME NAILS PROFESSIONAL</span><span class="page-no">CATÁLOGO GENERAL</span></header>
+      <section class="cover-hero">
+        <img class="cover-logo" src="assets/logo-suprema.png" alt="Supreme Nails Professional">
+        <p class="cover-tagline">Esmaltes semipermanentes, colecciones exclusivas y herramientas profesionales para el cuidado y la belleza de tus manos.</p>
+      </section>
+      <section class="cover-links" aria-label="Categorías del catálogo">
+        <button class="link-item link-esmaltes" data-target="04" type="button">
+          <span class="link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5S6 10.8 6 15a6 6 0 0 0 12 0c0-4.2-6-12.5-6-12.5Z"/></svg></span>
+          <span class="link-text">
+            <span class="link-title">Esmaltes</span>
+            <span class="link-sub">Semipermanentes · 6 tonos exclusivos</span>
+          </span>
+          <span class="link-arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="link-item link-colecciones" data-target="05" type="button">
+          <span class="link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 13.8 9l6.2 1.8-6.2 1.8L12 19l-1.8-6.4L4 10.8 10.2 9 12 2.5Z"/></svg></span>
+          <span class="link-text">
+            <span class="link-title">Colecciones</span>
+            <span class="link-sub">Miracle Gel Polish · Perlado, Glitter, Cat Eye y más</span>
+          </span>
+          <span class="link-arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="link-item link-herramientas" data-target="06" type="button">
+          <span class="link-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 5.3a3.6 3.6 0 0 0-4.9 4.6L4.8 15.8a1.7 1.7 0 0 0 2.4 2.4l5.9-5.9a3.6 3.6 0 0 0 4.6-4.9l-2.3 2.3-2-2 2.2-2.4Z"/></svg></span>
+          <span class="link-text">
+            <span class="link-title">Herramientas</span>
+            <span class="link-sub">Cortaúñas, tijeras y alicates profesionales</span>
+          </span>
+          <span class="link-arrow" aria-hidden="true">→</span>
+        </button>
+      </section>
+      <footer class="footer cover-footer"><span>SUPREME NAILS PROFESSIONAL</span><span class="line"></span><span>CATÁLOGO 2026</span></footer>
+    </main>
+  </div>
+</section>
+
+<section class="sheet" data-page="04" aria-label="Página 04">
+  <div class="page-grid">
+    
+    <main class="content">
+      <header class="topline"><img class="brand-logo" src="assets/logo-suprema.png" alt="Supreme Nails Professional"><span class="page-no">PÁG. 04</span></header>
+      <section class="hero"><div><div class="category">CATEGORÍA</div><h1 class="title">SEMIPERMANENTES</h1></div><p class="lead">Color, durabilidad y brillo<br>en cada aplicación.</p><div class="hero-promo"><i class="dash"></i><span>TONOS<br>QUE TE INSPIRAN</span></div></section>
+      <section class="listing">
+        <div class="listing-head">
+          <span class="listing-count">6 productos</span>
+          <div class="view-toggle" role="group" aria-label="Columnas de la grilla">
+            <button type="button" data-cols="1" aria-label="1 columna" title="1 columna"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2"/></svg></button>
+            <button type="button" data-cols="2" aria-label="2 columnas" title="2 columnas"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="7" height="12" rx="1.5"/><rect x="11" y="4" width="7" height="12" rx="1.5"/></svg></button>
+            <button type="button" data-cols="3" aria-label="3 columnas" title="3 columnas"><svg viewBox="0 0 20 20"><rect x="1.4" y="4" width="4.6" height="12" rx="1.1"/><rect x="7.7" y="4" width="4.6" height="12" rx="1.1"/><rect x="14" y="4" width="4.6" height="12" rx="1.1"/></svg></button>
+          </div>
+        </div>
+        <div class="grid six">
+        <article class="card"><div class="photo"><img src="assets/sp01.png" alt="LUNÉ semipermanente SP01"></div><div class="info"><span class="code">SP01</span><h2 class="name">ROSA NUBE</h2><p class="size">15 ml</p><p class="desc">Un rosa delicado y versátil que realza la belleza natural de tus uñas.</p><span class="price">$ 28.900</span></div></article>
+        <article class="card"><div class="photo"><img src="assets/sp02.png" alt="LUNÉ semipermanente SP02"></div><div class="info"><span class="code">SP02</span><h2 class="name">LILA SOFT</h2><p class="size">15 ml</p><p class="desc">Un tono lila pastel que aporta elegancia y un toque moderno a cualquier look.</p><span class="price">$ 28.900</span></div></article>
+        <article class="card"><div class="photo"><img src="assets/sp03.png" alt="LUNÉ semipermanente SP03"></div><div class="info"><span class="code">SP03</span><h2 class="name">NUDE CLÁSICO</h2><p class="size">15 ml</p><p class="desc">El equilibrio perfecto entre sofisticación y naturalidad.</p><span class="price">$ 28.900</span></div></article>
+        <article class="card"><div class="photo"><img src="assets/sp04.png" alt="LUNÉ semipermanente SP04"></div><div class="info"><span class="code">SP04</span><h2 class="name">ROJO ICONO</h2><p class="size">15 ml</p><p class="desc">Un tono clásico e intenso que nunca pasa de moda.</p><span class="price">$ 28.900</span></div></article>
+        <article class="card"><div class="photo"><img src="assets/sp05.png" alt="LUNÉ semipermanente SP05"></div><div class="info"><span class="code">SP05</span><h2 class="name">BEIGE ETERNO</h2><p class="size">15 ml</p><p class="desc">Un nude atemporal que complementa todo tu estilo.</p><span class="price">$ 28.900</span></div></article>
+        <article class="card"><div class="photo"><img src="assets/sp06.png" alt="LUNÉ semipermanente SP06"></div><div class="info"><span class="code">SP06</span><h2 class="name">MAUVE DREAM</h2><p class="size">15 ml</p><p class="desc">Un tono malva sofisticado que resalta tu esencia única.</p><span class="price">$ 28.900</span></div></article>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+</section>
+
+<section class="sheet overview" data-page="05" aria-label="Página 05" hidden>
+  <div class="page-grid">
+    
+    <main class="content">
+      <header class="topline"><img class="brand-logo" src="assets/logo-suprema.png" alt="Supreme Nails Professional"><span class="page-no">PÁG. 05</span></header>
+      <section class="hero"><div><div class="category">CATEGORÍA</div><h1 class="title">SEMIPERMANENTES</h1></div><p class="lead">Color, durabilidad y brillo<br>en cada aplicación.</p><div class="hero-promo"><i class="dash"></i><span>TONOS<br>QUE TE INSPIRAN</span></div></section>
+      <section>
+        <div class="overview-main">
+          <article class="miracle"><div class="photo"><img src="assets/miracle.png" alt="Miracle Gel Polish 15 ml"></div><div class="miracle-info"><span class="pill">MIRACLE</span><h2>GEL POLISH</h2><p class="size">15 ml</p><p class="desc">Una colección de alta cobertura con una amplia gama de tonos para cada estilo.</p><span class="price">$ 32.900</span></div></article>
+          <div class="swatch-wall">
+            <script>
+              const colorMap=['#eed4d5','#e8c0d0','#d9b0b0','#8d0f2f','#bd9b8f','#a55f82','#f1d8dd','#dbb7e0','#a78297','#c97b8c','#ef9eaf','#ef7e93','#d6526b','#c92848','#c60022','#ab001d','#8b0c19','#70111f','#5e1023','#b90024','#a979bd','#8e69a7','#a97fb4','#7c4458','#4a162b','#bb6c87','#a78995','#3f1b2c','#91817e','#161616'];
+              const nail=(color,label,index)=>`<svg class="nail" viewBox="0 0 72 112" role="img" aria-label="${label}" style="--nail-color:${color}"><defs><linearGradient id="nail-depth-${index}" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="color-mix(in srgb, ${color}, #000 34%)"/><stop offset=".20" stop-color="${color}"/><stop offset=".52" stop-color="color-mix(in srgb, ${color}, #fff 28%)"/><stop offset=".78" stop-color="${color}"/><stop offset="1" stop-color="color-mix(in srgb, ${color}, #000 38%)"/></linearGradient><linearGradient id="nail-tip-${index}" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient></defs><path class="nail-shadow" d="M36 4C20 4 12 17 12 35c0 27 7 51 24 72 17-21 24-45 24-72C60 17 52 4 36 4Z"/><path class="nail-surface" style="fill:url(#nail-depth-${index})" d="M36 4C20 4 12 17 12 35c0 27 7 51 24 72 17-21 24-45 24-72C60 17 52 4 36 4Z"/><path class="nail-volume" style="fill:url(#nail-tip-${index})" d="M36 4C20 4 12 17 12 35c0 27 7 51 24 72 17-21 24-45 24-72C60 17 52 4 36 4Z"/><path class="nail-shine" d="M24 23c-4 15-2 34 3 46"/><path class="nail-glint" d="M31 12c4-2 8-2 11 0"/><path class="nail-cuticle" d="M24 92c7 6 17 6 24 0"/></svg>`;
+              const tones=colorMap.map((color,i)=>`<div class="swatch-cell">${nail(color,`Tono M${String(i+1).padStart(3,'0')}`,i)}<span>M${String(i+1).padStart(3,'0')}</span></div>`).join('');document.currentScript.parentElement.insertAdjacentHTML('beforeend',tones);
+            </script>
+          </div>
+        </div>
+        <div class="mini-row">
+          <article class="mini-card" data-effect="pearl"><div class="photo"><img src="assets/nude.png" alt="LUNÉ Gel Polish Nude Perlado"></div><div class="mini-info"><span class="mini-code">MC01</span><h3>LUNÉ · PERLADO</h3><p class="mini-size">GEL POLISH NUDE · 15 ml</p><p class="mini-desc">Un acabado nacarado que aporta luminosidad y suavidad a cada aplicación.</p><div class="mini-swatches"><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#eed4d5"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#d9b0b0"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#bd9b8f"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#a78297"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg></div><span class="mini-price">$ 28.900</span></div></article>
+          <article class="mini-card" data-effect="metallic"><div class="photo"><img src="assets/pastel.png" alt="LUNÉ Gel Polish Pastel Metálico"></div><div class="mini-info"><span class="mini-code">MC02</span><h3>LUNÉ · METÁLICO</h3><p class="mini-size">GEL POLISH PASTEL · 15 ml</p><p class="mini-desc">Un brillo metálico sutil que realza los tonos pastel con un acabado premium.</p><div class="mini-swatches"><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#a979bd"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#e8c0d0"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#b9cce0"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#b9d8bf"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg></div><span class="mini-price">$ 28.900</span></div></article>
+          <article class="mini-card" data-effect="glitter"><div class="photo"><img src="assets/glitter.png" alt="LUNÉ Gel Polish Glitter Reflectivo"></div><div class="mini-info"><span class="mini-code">MC03</span><h3>LUNÉ · GLITTER</h3><p class="mini-size">GEL POLISH REFLECTIVO · 15 ml</p><p class="mini-desc">Destellos multidimensionales que iluminan la manicura con un brillo intenso.</p><div class="mini-swatches"><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#bb6c87"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#766689"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#ab9371"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg><svg class="nail" viewBox="0 0 64 100" style="--nail-color:#5a5d63"><path d="M32 3C15 3 9 18 9 37v29c0 18 10 31 23 31s23-13 23-31V37C55 18 49 3 32 3Z"/></svg></div><span class="mini-price">$ 28.900</span></div></article>
+          <article class="mini-card" data-effect="cat-eye"><div class="photo"><img src="assets/pastel.png" alt="LUNÉ Gel Polish Ojo de Gato Magnético"></div><div class="mini-info"><span class="mini-code">MC04</span><h3>LUNÉ · CAT EYE</h3><p class="mini-size">GEL POLISH MAGNÉTICO · 15 ml</p><p class="mini-desc">Un efecto magnético tridimensional que crea profundidad y movimiento.</p><div class="mini-swatches"><svg class="nail" style="--nail-color:#2c506a"></svg><svg class="nail" style="--nail-color:#624278"></svg><svg class="nail" style="--nail-color:#8b274c"></svg><svg class="nail" style="--nail-color:#42604d"></svg></div><span class="mini-price">$ 31.900</span></div></article>
+          <article class="mini-card" data-effect="jelly"><div class="photo"><img src="assets/nude.png" alt="LUNÉ Gel Polish Jelly Translúcido"></div><div class="mini-info"><span class="mini-code">MC05</span><h3>LUNÉ · JELLY</h3><p class="mini-size">GEL POLISH TRANSLÚCIDO · 15 ml</p><p class="mini-desc">Un acabado translúcido y jugoso que deja ver la uña natural con un toque de color.</p><div class="mini-swatches"><svg class="nail" style="--nail-color:#e77a91"></svg><svg class="nail" style="--nail-color:#df9c55"></svg><svg class="nail" style="--nail-color:#c45694"></svg><svg class="nail" style="--nail-color:#7853a7"></svg></div><span class="mini-price">$ 28.900</span></div></article>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+</section>
+
+<section class="sheet tools" data-page="06" aria-label="Página 06" hidden>
+  <div class="page-grid">
+    
+    <main class="content">
+      <header class="topline"><img class="brand-logo" src="assets/logo-suprema.png" alt="Supreme Nails Professional"><span class="page-no">PÁG. 06</span></header>
+      <section class="hero"><div><div class="category">CATEGORÍA</div><h1 class="title">HERRAMIENTAS</h1></div><p class="lead">Precisión y comodidad<br>en cada detalle.</p><div class="hero-promo"><i class="dash"></i><span>HERRAMIENTAS<br>PARA GRANDES RESULTADOS</span></div></section>
+      <section class="listing">
+        <div class="listing-head">
+          <span class="listing-count">6 herramientas</span>
+          <div class="view-toggle" role="group" aria-label="Columnas de la grilla">
+            <button type="button" data-cols="1" aria-label="1 columna" title="1 columna"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2"/></svg></button>
+            <button type="button" data-cols="2" aria-label="2 columnas" title="2 columnas"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="7" height="12" rx="1.5"/><rect x="11" y="4" width="7" height="12" rx="1.5"/></svg></button>
+            <button type="button" data-cols="3" aria-label="3 columnas" title="3 columnas"><svg viewBox="0 0 20 20"><rect x="1.4" y="4" width="4.6" height="12" rx="1.1"/><rect x="7.7" y="4" width="4.6" height="12" rx="1.1"/><rect x="14" y="4" width="4.6" height="12" rx="1.1"/></svg></button>
+          </div>
+        </div>
+        <div class="tool-grid">
+        <article class="tool-card"><div class="photo"><img src="assets/h01.webp" alt="H01 Cortaúñas ombré rosa y dorado"></div><div class="tool-info"><span class="code">H01</span><h3>CORTAÚÑAS<br>OMBRÉ</h3><p>Acero inoxidable con acabado degradé rosa y dorado. Corte firme y preciso.</p><span class="price">$ 32.900</span></div></article>
+        <article class="tool-card"><div class="photo"><img src="assets/h02.webp" alt="H02 Cortaúñas holográfico"></div><div class="tool-info"><span class="code">H02</span><h3>CORTAÚÑAS<br>HOLOGRÁFICO</h3><p>Acabado holográfico multicolor. Corte preciso y resistente.</p><span class="price">$ 4.900</span></div></article>
+        <article class="tool-card"><div class="photo"><img src="assets/h03.webp" alt="H03 Tijera curva para cutícula"></div><div class="tool-info"><span class="code">H03</span><h3>TIJERA CURVA<br>PARA CUTÍCULA</h3><p>Punta curva de precisión para retirar cutícula. Acero quirúrgico duradero.</p><span class="price">$ 24.900</span></div></article>
+        <article class="tool-card"><div class="photo"><img src="assets/h04.webp" alt="H04 Set pusher y cortador doble punta x3"></div><div class="tool-info"><span class="code">H04</span><h3>SET PUSHER<br>Y CORTADOR X3</h3><p>Tres herramientas doble punta: empuja de un lado y corta del otro.</p><span class="price">$ 12.900</span></div></article>
+        <article class="tool-card"><div class="photo"><img src="assets/h05.webp" alt="H05 Alicate cortacutícula holográfico"></div><div class="tool-info"><span class="code">H05</span><h3>ALICATE<br>CUTÍCULA</h3><p>Media quijada de precisión. Acabado holográfico multicolor.</p><span class="price">$ 14.900</span></div></article>
+        <article class="tool-card"><div class="photo"><img src="assets/h06.webp" alt="H06 Alicate cortacutícula profesional"></div><div class="tool-info"><span class="code">H06</span><h3>ALICATE<br>PROFESIONAL</h3><p>Media quijada en acero inoxidable. Corte preciso y duradero.</p><span class="price">$ 6.900</span></div></article>
+        </div>
+      </section>
+      
+    </main>
+  </div>
+</section>
+</div>
+</div>
+<script>
+const buttons=[...document.querySelectorAll('.toolbar button')]; const navButtons=[...document.querySelectorAll('[data-target]')]; const sheets=[...document.querySelectorAll('.sheet')];
+function showPage(id){sheets.forEach(s=>s.hidden=s.dataset.page!==id);buttons.forEach(b=>b.setAttribute('aria-current',b.dataset.target===id?'page':'false'));document.title=id==='00'?'Supreme Nails Professional — Catálogo':`LUNÉ Beauty Studio — Pág. ${id}`;window.scrollTo({top:0,behavior:'instant'});sizePhotos();}
+navButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.target)));
+function sizePhotos(){
+  const sheet=sheets.find(s=>!s.hidden);
+  if(!sheet) return;
+  const cards=[...sheet.querySelectorAll('.card, .tool-card, .mini-card, .miracle')];
+  if(window.matchMedia('(max-width:760px)').matches){
+    cards.forEach(card=>{
+      const photo=card.querySelector('.photo');
+      if(photo){photo.style.width='';photo.style.height='';}
+    });
+    return;
+  }
+  cards.forEach(card=>{
+    const photo=card.querySelector('.photo');
+    if(!photo) return;
+    photo.style.width='1px';photo.style.height='1px';
+  });
+  void sheet.offsetHeight;
+  cards.forEach(card=>{
+    const info=card.querySelector('.info, .tool-info, .mini-info, .miracle-info');
+    const photo=card.querySelector('.photo');
+    if(!info||!photo) return;
+    const naturalH=info.getBoundingClientRect().height;
+    const cardW=card.getBoundingClientRect().width;
+    const gap=parseFloat(getComputedStyle(card).columnGap)||0;
+    const minInfoW=cardW*0.5;
+    const maxPhoto=cardW-gap-minInfoW;
+    const size=Math.max(40,Math.min(naturalH,maxPhoto));
+    photo.style.width=size+'px';
+    photo.style.height=size+'px';
+  });
+}
+window.addEventListener('resize',sizePhotos);
+window.addEventListener('load',sizePhotos);
+const nailShape='M36 4C20 4 12 17 12 35c0 27 7 51 24 72 17-21 24-45 24-72C60 17 52 4 36 4Z';
+const effectLayers={
+  pearl:'<path class="effect-pearl" d="M18 40c9-13 27-17 37-5-8 13-25 19-37 5Z"/>',
+  metallic:'<path class="effect-metal" d="M31 8c10 13 10 55 4 91-7-36-7-78-4-91Z"/>',
+  glitter:'<g class="effect-glitter"><circle cx="24" cy="29" r="3"/><circle cx="42" cy="21" r="2"/><circle cx="48" cy="45" r="3"/><circle cx="29" cy="58" r="2"/><circle cx="39" cy="76" r="3"/><circle cx="22" cy="82" r="2"/></g>',
+  'cat-eye':'<path class="effect-cat-eye" d="M14 68 57 24c3 12 2 27-2 40L23 95c-4-8-7-17-9-27Z"/>',
+  jelly:'<path class="effect-jelly" d="M17 39c8 7 29 7 38 0-1 24-8 46-19 62-11-16-18-38-19-62Z"/>'
+};
+const miniNail=(index,effect)=>`<defs><linearGradient id="mini-depth-${index}" x1="0" y1="0" x2="1" y2=".35"><stop offset="0" stop-color="color-mix(in srgb, var(--nail-color), #000 34%)"/><stop offset=".22" stop-color="var(--nail-color)"/><stop offset=".54" stop-color="color-mix(in srgb, var(--nail-color), #fff 28%)"/><stop offset="1" stop-color="color-mix(in srgb, var(--nail-color), #000 38%)"/></linearGradient></defs><path class="nail-shadow" d="${nailShape}"/><path class="nail-surface" style="fill:url(#mini-depth-${index})" d="${nailShape}"/>${effectLayers[effect]||''}<path class="nail-shine" d="M24 23c-4 15-2 34 3 46"/><path class="nail-glint" d="M31 12c4-2 8-2 11 0"/><path class="nail-cuticle" d="M24 92c7 6 17 6 24 0"/>`;
+document.querySelectorAll('.mini-swatches .nail').forEach((svg,index)=>{svg.setAttribute('viewBox','0 0 72 112');svg.innerHTML=miniNail(index,svg.closest('.mini-card').dataset.effect)});
+const colButtons=[...document.querySelectorAll('.view-toggle button')];
+function setCols(n){
+  document.body.setAttribute('data-cols',n);
+  colButtons.forEach(b=>b.setAttribute('aria-current',b.dataset.cols===n?'true':'false'));
+  localStorage.setItem('catalogCols',n);
+  sizePhotos();
+}
+colButtons.forEach(b=>b.addEventListener('click',()=>setCols(b.dataset.cols)));
+setCols(localStorage.getItem('catalogCols')||'2');
+showPage('00');
+</script>
+</body>
+</html>
