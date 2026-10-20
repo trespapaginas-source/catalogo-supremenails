@@ -16,4 +16,5 @@ Esta regla aplica a cualquier pedido de UI/UX en este proyecto (catálogo, tarje
 
 ## Otras referencias del proyecto
 
+- [BITACORA.md](BITACORA.md) — contexto completo del proyecto: fuente de datos oficial (Google Sheet "BASE PRODUCTOS SUPREME NAILS"), fotos en R2, plan acordado, decisiones abiertas y estado de Cloudflare/GitHub. **Leer primero al retomar el trabajo en otro computador.**
 - [NOTAS_CORRECCIONES.md](NOTAS_CORRECCIONES.md) — registro de errores técnicos ya corregidos (CSS Grid, caché de imágenes, texto quemado en imágenes, etc.) y reglas generales para no repetirlos. Consultar antes de tocar layout/CSS existente.
