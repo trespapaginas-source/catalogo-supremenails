@@ -1,7 +1,7 @@
 # Bitácora del proyecto — Catálogo Supreme Nails
 
 > Para retomar el trabajo en otro computador sin perder contexto.
-> Última actualización: **2026-10-20** (rama `feat/catalogo-desde-sheet`, aún sin fusionar a `main` ni publicada en producción). Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
+> Última actualización: **2026-10-20** (el catálogo que lee el Sheet ya está en `main` — commit `aac91cb` — y **publicado en producción**). Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
 > Este repositorio es **público**: aquí no hay claves ni correos. Sí aparecen el ID de la Base de Google y el `gid` de su pestaña (`index.html`, constantes `SHEET_ID` y `SHEET_GID`): son necesarios para que la página lea el Sheet, que es **de solo lectura para el público**. Nadie puede editarlo ni borrarlo desde la página.
 
 Convención: **[VERIFICADO]** = se comprobó con una herramienta ese día. **[DECIDIDO]** = el dueño del proyecto lo decidió. **[PENDIENTE]** = falta decisión o acción.
@@ -31,9 +31,9 @@ Reglas permanentes (también en `CLAUDE.md`):
 
 ## 3. Estado actual del catálogo
 
-**`main` (publicado en producción):** versión con 394 productos incrustados en `index.html`, que lee de la CDN de Shopify. Último commit funcional: `0f60bdb`.
+**Producción (`https://catalogo-supremenails.pages.dev`), publicada el 2026-10-20:** despliegue `25e38926` (commit `aac91cb`, rama `main`). Punto de retorno: el despliegue anterior `38f6aa42` (commit `0f60bdb`, 394 productos incrustados que leían de la CDN de Shopify); se restaura desde el panel de Cloudflare Pages → Despliegues → «Rollback» o volviendo a desplegar ese commit. **No se hizo `git push`** (Pages está sin conexión a GitHub: se sube por `wrangler pages deploy`).
 
-**Rama `feat/catalogo-desde-sheet` (hecha el 2026-10-20, verificada, sin fusionar):** el catálogo **lee la Base de Google Sheets en vivo**. **[VERIFICADO]** con la Base real (47 productos marcados) y con una simulación de los 995 con foto.
+**Desde el 2026-10-20 (rama `feat/catalogo-desde-sheet`, fusionada a `main` sin conflictos):** el catálogo **lee la Base de Google Sheets en vivo**. **[VERIFICADO]** en producción con la Base real: **995 productos** («Sí»), 12 categorías, todos con precio; consola sin errores; el dueño decidió dejar **visibles** `SEMIF006` a `SEMIF009`.
 - Muestra solo las filas con **«Visible en catálogo» = SI/Sí**. Precio = «Precio de venta 1». Fotos = «Enlace foto 1…8».
 - Las categorías se crean solas desde la columna «Categoría» (hoy 17 en la Base; 12 con productos con foto). Las 11 de siempre conservan su frase e ícono; hay frases e íconos propios para Puntas para dril, Pinceles, Aceites de cutícula, Lámparas, Monómeros y Dremel; una categoría nueva usa un ícono y frase genéricos (diccionario `CAT_META`).
 - Carga: esqueletos con brillo suave; guarda el último catálogo en el celular (localStorage) y lo muestra al instante mientras actualiza por detrás; si Google falla, muestra el último guardado, y si no hay nada guardado, un mensaje con «Reintentar» y WhatsApp. Estado vacío si no hay ningún `SI`.
@@ -45,7 +45,7 @@ Reglas permanentes (también en `CLAUDE.md`):
 - Favoritos: se limpian solos si el producto deja de estar visible; se corrigió el contador al recargar.
 - Funciones que siguen igual: favoritos en panel deslizable, cotización por WhatsApp (mismo número y mensaje), selector de 1/2/3 columnas.
 
-Vista previa de esta rama: `https://prueba.catalogo-supremenails.pages.dev` (despliegue en rama de vista previa de Cloudflare; **la producción no se tocó**).
+Vista previa (misma versión): `https://prueba.catalogo-supremenails.pages.dev`. Para publicar de nuevo: carpeta temporal solo con `index.html` y `assets/` (`git archive main index.html assets`) y `wrangler pages deploy <carpeta> --project-name catalogo-supremenails --branch main`.
 
 ## 4. Fuente de datos oficial
 
@@ -105,8 +105,9 @@ El plan anterior (Worker propio con caché + panel de administración con contra
 **Resueltas el 2026-10-20:** precio público = Precio de venta 1; visibilidad = columna «Visible en catálogo» (`SI`); las fotos están en el Sheet; no se hará por ahora el panel de subida de fotos; Precio 2 y la lista completa pueden quedar accesibles para quien descargue el CSV; la categoría se crea sola desde el Sheet.
 
 **Pendientes:**
-1. **Marcar `SI`** en `Visible en catálogo` los productos que se quieren mostrar (el dueño dijo que lo haría con todos los que tienen foto, salvo `SEMIF006` a `SEMIF009`). Hoy hay 47.
-2. **Revisar y aprobar** la vista previa en un celular real, y luego fusionar la rama a `main` y publicar en producción.
+1. ~~Marcar `SI`~~ **Hecho (2026-10-20):** los 995 productos con foto están en «Sí», incluidos `SEMIF006`–`009` (el dueño decidió dejarlos visibles). Desde ahora la app de fotos pone «Sí» sola con la primera foto (ver sección 5).
+2. ~~Fusionar y publicar~~ **Hecho (2026-10-20).** Falta solo que el dueño revise el sitio público en un celular real y decidir si se hace `git push` de `main`.
+   - Propuestas sin responder: página oculta `#/revision` (filas marcadas «Sí» que se saltan y por qué) y freno si el catálogo baja de golpe; resaltado de códigos repetidos en la columna B de la hoja.
 3. **Peso de las fotos** (sección 6). El dueño ya optimizó las 18 más pesadas **conservando las mismas claves en R2** (las URL de «Enlace foto 1…8» no cambian; R2 no se vacía). **Siguiente paso, solo cuando el dueño lo confirme (no implementado):** copias livianas en `/fotos/web400/{SKU}/{n}.webp` (tarjetas) y `/fotos/web800/{SKU}/{n}.webp` (ficha), cambiando en la URL `/fotos/{SKU}/{n}.jpg` por esas rutas, con respaldo a la foto original si la copia no existe (evento `error` de la imagen). Entonces también se puede subir `PRODUCTOS_POR_PAGINA`.
 4. Cuál proyecto de Cloudflare Pages es el oficial para Instagram (`catalogo-supremenails`, `catalogo-supreme-nails-edit` o `supreme-nails`) y **conectar Pages a GitHub** con un clic del dueño para que se actualice con cada push.
 5. Corregir en el Sheet los errores de ortografía listados en `NOTAS_CORRECCIONES.md` #15.
