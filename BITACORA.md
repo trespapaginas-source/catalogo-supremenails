@@ -1,8 +1,8 @@
 # Bitácora del proyecto — Catálogo Supreme Nails
 
 > Para retomar el trabajo en otro computador sin perder contexto.
-> Última actualización: **2026-10-19**. Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
-> Este repositorio es **público**: aquí no hay claves, correos, IDs de cuenta ni IDs de hojas. Esos datos se consultan en Cloudflare / Google Drive.
+> Última actualización: **2026-10-20** (rama `feat/catalogo-desde-sheet`, aún sin fusionar a `main` ni publicada en producción). Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
+> Este repositorio es **público**: aquí no hay claves ni correos. Sí aparecen el ID de la Base de Google y el `gid` de su pestaña (`index.html`, constantes `SHEET_ID` y `SHEET_GID`): son necesarios para que la página lea el Sheet, que es **de solo lectura para el público**. Nadie puede editarlo ni borrarlo desde la página.
 
 Convención: **[VERIFICADO]** = se comprobó con una herramienta ese día. **[DECIDIDO]** = el dueño del proyecto lo decidió. **[PENDIENTE]** = falta decisión o acción.
 
@@ -29,73 +29,68 @@ Reglas permanentes (también en `CLAUDE.md`):
 | Carpeta local (computador 1) | `.../compartido_pc_portatil/supreme_catalogo` | |
 | Archivos del repo | `index.html`, `assets/`, `CLAUDE.md`, `NOTAS_CORRECCIONES.md`, `BITACORA.md` | `AGENTS.md` existía sin seguimiento en el computador 1; no lo creó Claude |
 
-## 3. Estado actual del catálogo (código en `main`)
+## 3. Estado actual del catálogo
 
-Último commit al momento de escribir esto: `0f60bdb` ("Give product photo tiles a soft neutral background").
+**`main` (publicado en producción):** versión con 394 productos incrustados en `index.html`, que lee de la CDN de Shopify. Último commit funcional: `0f60bdb`.
 
-Funciones ya implementadas **[VERIFICADO en sesiones previas con capturas]**:
-- Inicio con categorías y página de categoría con rejilla de productos.
-- Fondo de página rosado con logo; versión **vertical** del fondo para celular (`assets/fondo_c_vertical.png`).
-- Tarjetas de producto 1:1, tamaños uniformes, selector de 2/3 columnas en móvil.
-- Buscador dentro de cada categoría (píldora con búsqueda + conmutador de vista), con filtro sin acentos.
-- Ventana emergente de producto (foto grande).
-- Favoritos con corazón y contador en la barra superior; lista de favoritos como **panel deslizable** (no página aparte) con X para cerrar; 1 columna si hay un producto, 2 si hay más.
-- Botón **Cotizar por WhatsApp**: pide nombre y ciudad (no el teléfono) y abre `wa.me` con el mensaje "Hola, quiero cotizar los siguientes productos" + nombre y código de cada producto. Número configurado: constante `WHATSAPP_NUMBER` en `index.html`.
-- Fondo neutro suave detrás de las fotos (las fotos de origen son inconsistentes).
+**Rama `feat/catalogo-desde-sheet` (hecha el 2026-10-20, verificada, sin fusionar):** el catálogo **lee la Base de Google Sheets en vivo**. **[VERIFICADO]** con la Base real (47 productos marcados) y con una simulación de los 995 con foto.
+- Muestra solo las filas con **«Visible en catálogo» = SI/Sí**. Precio = «Precio de venta 1». Fotos = «Enlace foto 1…8».
+- Las categorías se crean solas desde la columna «Categoría» (hoy 17 en la Base; 12 con productos con foto). Las 11 de siempre conservan su frase e ícono; hay frases e íconos propios para Puntas para dril, Pinceles, Aceites de cutícula, Lámparas, Monómeros y Dremel; una categoría nueva usa un ícono y frase genéricos (diccionario `CAT_META`).
+- Carga: esqueletos con brillo suave; guarda el último catálogo en el celular (localStorage) y lo muestra al instante mientras actualiza por detrás; si Google falla, muestra el último guardado, y si no hay nada guardado, un mensaje con «Reintentar» y WhatsApp. Estado vacío si no hay ningún `SI`.
+- Listado **paginado de 24 en 24** (`PRODUCTOS_POR_PAGINA` en `index.html`): solo se dibujan y piden foto las tarjetas de la página actual; la página va en la URL (`#/gel/2`, `#/gel` = página 1) y el botón «atrás», recargar y compartir el enlace la conservan; controles de página debajo de la lista (versión compacta «Página 2 de 12» en celular). Ver `NOTAS_CORRECCIONES.md` #17.
+- Ficha de producto con galería (flechas, miniaturas y deslizar), etiquetas de marca y tipo; foto de reemplazo con el logo si falta o falla; precio «Consultar» si no hay precio.
+- Botón «atrás» del celular: vuelve a las categorías en vez de sacar de la página; cada categoría tiene enlace directo (`#/gel`).
+- Buscador por varias palabras, sin tildes ni mayúsculas, por nombre, marca, tipo y código; recorre **todos** los productos de la categoría (no solo la página visible) y pagina sus resultados igual (24 por página, «N resultados»).
+- Nombres presentados en formato título con tildes (ver `NOTAS_CORRECCIONES.md` #15).
+- Favoritos: se limpian solos si el producto deja de estar visible; se corrigió el contador al recargar.
+- Funciones que siguen igual: favoritos en panel deslizable, cotización por WhatsApp (mismo número y mensaje), selector de 1/2/3 columnas.
 
-Cómo se alimenta hoy: los productos están **incrustados** en `index.html` (arreglo `PRODUCTS` y `CATEGORIES`), con forma `{sku, name, cat, price, medida, color, img, desc}`. Las imágenes salen del CDN de Shopify (`cdn.shopify.com/.../files/<SKU>.jpg`). **No hay CMS ni backend.** Cambiar un precio o una foto hoy exige editar el código.
+Vista previa de esta rama: `https://prueba.catalogo-supremenails.pages.dev` (despliegue en rama de vista previa de Cloudflare; **la producción no se tocó**).
 
 ## 4. Fuente de datos oficial
 
-- **[DECIDIDO]** La fuente de la verdad de todo es el Google Sheet **`BASE PRODUCTOS SUPREME NAILS`**, pestaña principal `Lis-de-Pro-y-Ser` (~1.800 filas).
-- **[DECIDIDO]** El Google Sheet **`Categoría-de-productos`** (pestañas por categoría y `NO_DISPONIBLES`) está **obsoleto**. No usarlo.
-- **[VERIFICADO]** Se confirmó de tres formas: (1) la app de captura ya desplegada devuelve 1.800 productos con la estructura de la Base; (2) la Base fue modificada el 2026-10-19, la vieja por última vez el 2026-08-24; (3) la estructura de columnas coincide solo con la Base.
-- Otras hojas del Drive son copias o proyectos ajenos al catálogo (cobros, CRM, ERP, simuladores). `Catalogo_Supreme_Nails` (539 filas, sin fotos) y `Prueba - Captura Fotos Supreme Nails` (datos de prueba `TEST-001`…) **no** son la fuente.
-
-Columnas de `Lis-de-Pro-y-Ser` **[VERIFICADO]**: Código padre, Código Único (SKU), Variante, Nombre, Categoría, Tipo, Precio de venta 1, Precio de venta 2, Foto, Cantidad de fotos, Marca, Contenido, ID.
-
-Problemas de esa hoja para leerla desde el catálogo:
-- Los encabezados están en la **fila 9**, bajo un bloque con celdas combinadas (NIT, enlaces).
-- Los precios son **texto** con formato colombiano (`8.100,00`).
-- Hay **dos precios**; no se ha definido cuál es el público.
-- "Foto" es solo Sí/No (y "Cantidad de fotos" un número); **no hay URLs**. "ID" está vacía.
-- La categoría de la hoja (`ACEITE DE CUTICULA`) no coincide con las categorías del catálogo; hay que cruzarlas.
-- Pestañas adicionales: `No disponible` (~500 filas, con "Fotos tomadas" Sí/No) y `Eliminados` (~30 filas; su columna Nota dice "Foto en R2: <SKU>.jpg").
+- **[DECIDIDO]** La fuente de la verdad es el Google Sheet **`BASE PRODUCTOS SUPREME NAILS`**, pestaña `Lis-de-Pro-y-Ser` (~1.800 filas). El Sheet `Categoría-de-productos` está **obsoleto**.
+- **[DECIDIDO 2026-10-20]** Precio público = **«Precio de venta 1»**. Visibilidad = columna **«Visible en catálogo»** con `SI`. Las fotos salen de las columnas **«Enlace foto 1» a «Enlace foto 8»** de la misma pestaña (URLs directas `.jpg` del Worker de captura: `…/fotos/<SKU>/<n>.jpg`).
+- **Cómo lee el catálogo:** `https://docs.google.com/spreadsheets/d/<ID>/export?format=csv&gid=<GID>`. Funciona sin sesión porque el Sheet está compartido como «cualquiera con el enlace: lector» y Google permite la lectura desde otros dominios. No usar `gviz` (pierde datos; `NOTAS_CORRECCIONES.md` #12). Las columnas se buscan **por el nombre del encabezado**: si alguien renombra «Visible en catálogo», «Nombre», «Categoría», «Código Único (SKU)» o «Precio de venta 1», el catálogo muestra el error (o el último catálogo guardado). Alias aceptados para la visibilidad: `Visible en catálogo`, `DISPONIBLE_CATALOGO`, `Disponible catálogo`.
+- **Permisos del Sheet (2026-10-20):** dueño: la cuenta del proyecto; editores: una cuenta del cliente y la cuenta de servicio de la app de captura; lectores: cualquiera con el enlace y otros dos correos. El público no puede editar ni borrar.
+- **Estado de los datos (2026-10-20):** 1.800 productos; 995 con enlace de foto; 47 marcados `SI` (todos Semipermanentes). Hay 4 productos con foto que también están en la pestaña `No disponible` (`SEMIF006` a `SEMIF009`): conviene no marcarlos.
+- Pestañas `No disponible` y `Eliminados`: el catálogo **no** las lee. La pestaña `Shopify` y `Shopify-Notas` las genera un programa a pedido («regenera»); no editarlas a mano.
 
 ## 5. Las fotos: R2 y la app de captura
 
-Existe una app aparte, ya terminada ("Supreme Nails Captura Fotos"), que es un **Cloudflare Worker**. **[DECIDIDO]** No se le va a modificar nada.
+Existe una app aparte ("Supreme Nails Captura Fotos"), que es un **Cloudflare Worker**. Se trabaja en **otro chat/proyecto** de Claude Code: sesión «Aplicativo web - fotos», carpeta `~/Descargas/Supreme Nail-portatil/` (código en `Supreme Nail/`, sin git; su propia `BITACORA.md`, `ENTREGA-CLIENTE/Checklist_entrega_tecnica.md` y guía del dueño `ENTREGA-CLIENTE/Guia_Catalogo_Supreme_Nails.html`). **Ese chat no toca este repo**; lo que cambia es la app de fotos y la hoja, de las que depende este catálogo. Leído a 2026-10-20 (bitácoras §39–§47 de ese proyecto):
+- **Desde el 2026-10-20 la app SÍ escribe en la hoja:** al guardar/borrar fotos actualiza al instante `Foto` (I), `Cantidad de fotos` (J) y `Enlace foto 1..8` (N:U, por nombre de encabezado), y una revisión cada 15 min (minutos 7, 22, 37, 52) corrige solo celdas de enlaces desactualizadas. Sustituir una foto (misma clave) no toca la hoja.
+- **«Visible en catálogo» = Sí automático** con la primera foto de un producto (solo si la celda estaba vacía, la fila no es «No fotografiar» y antes no tenía fotos; nunca pisa un «No»). Borrar todas las fotos no lo pasa a «No» (decisión pendiente del dueño).
+- La columna V tiene desplegable estricto Sí/No en V8:V2807; la hoja tiene filtro básico A7:AB1807 y 1.000 filas libres (1808–2807).
+- Una foto nueva queda en la clave R2 `{SKU}/{n}.jpg` (n=0 si es única) y se sirve en `/fotos/{SKU}/{n}.jpg` con `Cache-Control: private, max-age=60` (sin caché de Cloudflare). **No vaciar R2** mientras el catálogo use esos enlaces.
+- Riesgo de fila nueva: **copiar la fila entera de otro producto** copia Foto/Cantidad/enlaces/Visible y deja «Foto = Sí» falso; se pide insertar una fila vacía y escribir los datos.
+- Pendientes de ese lado que tocan al catálogo: copias web `web400/` y `web800/` (**no implementadas en el catálogo hasta que el dueño confirme**; las nuevas fotos tomadas con la app no tendrían copia → el catálogo debe caer a la original; ver NOTAS #17), regla ≤ 1 MB y quitar el recorte en la app (el dueño: «aún no»), qué hacer con «No disponible» (solo vive en la app de fotos, el catálogo no lo ve), privacidad de la hoja pública (columna H = precio mayorista queda descargable).
+- **Antes se decía que no se modificaría la app: ya no es cierto.** (Dato histórico del 2026-10-19 abajo.)
 
 **[VERIFICADO]** leyendo su código local y la versión publicada:
 - Worker de producción: `supreme-nails-captura-fotos-production` (existe también `-staging`). Versiones recientes del 2026-10-08/09.
 - Las fotos de producción están en el bucket R2 **`catalogo-fotos-prod`**, con respaldo en `catalogo-fotos-prod-backup` (y `catalogo-fotos-test` / `-test-backup` para pruebas).
-- **Nombres de archivo:** `<SKU>-1.jpg`, `<SKU>-2.jpg`… y `<SKU>.jpg` cuando es una sola foto sin número. Los códigos solo admiten letras, números y guiones.
+- **Nombres de archivo (dato del 2026-10-19, desactualizado):** `<SKU>-1.jpg`… Hoy las claves son `{SKU}/{n}.jpg` (ver arriba). Los códigos solo admiten letras, números y guiones.
 - Los reemplazos mueven la foto anterior a `trash/` (no se borra de verdad).
 - La disponibilidad que usa esa app se guarda en R2 en `estado/no-disponibles.json`, **no** en el Sheet.
 - Rutas de la app: `/api/productos`, `/api/fotos` (GET/POST/DELETE), `/fotos/<clave>`, y rutas `/admin/...`. Tiene un cron cada 15 minutos.
 - **Advertencia:** la app de captura **no tiene autenticación propia**. Tratar su enlace como privado.
 - **Desactualizado:** el `wrangler.toml` de la carpeta local de esa app (en el computador 1, carpeta `Documentos/Supreme Nail`) todavía apunta a la hoja vieja `Categoría-de-productos`. Lo que está **publicado** ya lee la Base. Si alguien redespliega desde esa carpeta sin corregirlo, el Worker leería la hoja obsoleta.
 
-## 6. Plan acordado (arquitectura) — aún NO implementado
+## 6. Arquitectura implementada (reemplaza al plan del 2026-10-19)
 
-Objetivo del dueño: **entregar el proyecto al cliente y desligarse**; el cliente no depende de él ni habrá mantenimiento. Por eso: pocas piezas, todas en cuentas del cliente, sin claves que caduquen.
+El plan anterior (Worker propio con caché + panel de administración con contraseña para subir fotos a R2) **se descartó por ahora** (decisión del dueño, 2026-10-20: «por ahora no»). Lo implementado es más simple:
 
-Flujo propuesto (opción A, **recomendada por Claude**, el dueño no la ha confirmado por nombre pero la pidió en esencia):
-1. El cliente edita el Google Sheet (nombres, precios, y una columna **Disponible** con lista desplegable Sí/No).
-2. Un Worker propio del catálogo lee la Base y guarda la respuesta unos minutos en caché, para que muchas visitas desde Instagram no saturen a Google (la API de Sheets tiene límites por minuto). Alternativa más simple: un `productos.json` que se regenera.
-3. **Panel de administración dentro del catálogo**, con contraseña: lista solo los productos con Disponible = Sí, buscador por nombre/SKU, vista de la foto actual y botón para subir o cambiar la foto.
-4. Al subir, el navegador **reduce y comprime** la imagen (~1200 px) y el Worker la guarda en R2 con la misma convención de nombres de la app de captura. **No hace falta escribir en el Sheet**: la URL de la foto se deduce del SKU. Se descartó la opción de escribir en el Sheet con cuenta de servicio de Google (clave frágil, más mantenimiento).
-5. El catálogo público muestra los productos disponibles.
-6. **[DECIDIDO]** Reutilizar el bucket existente `catalogo-fotos-prod` en vez de crear otro R2. El Worker del catálogo se conectaría a ese bucket por binding, sin tocar la app de captura.
+1. El cliente edita el Google Sheet: nombre, precio, categoría, enlaces de foto y `Visible en catálogo`.
+2. La página estática (`index.html`) descarga el CSV de la pestaña, lo interpreta en el navegador y guarda una copia en el celular.
+3. Las fotos se piden directamente al Worker de captura (`…workers.dev/fotos/…`); no se toca esa app.
+4. No hay servidor propio, ni claves, ni R2 en el catálogo.
 
-Columnas sugeridas para agregar a la Base (idealmente en una pestaña nueva `Catalogo_Web` con encabezados en la fila 1, alimentada con fórmulas desde la principal):
-`Foto URL` (o se deduce del SKU), `Visible`/`Disponible` (Sí/No), `Precio catálogo` (numérico, uno solo), `Categoría catálogo`, `Descripción`, y opcionales `Orden` y `Nuevo`.
-
-Notas técnicas:
-- Las fotos se sirven mejor con caché largo y desde un dominio propio de R2 o desde el Worker del catálogo (la app de captura las sirve con caché de solo 60 s).
-- El panel no quita fondos ni recorta; solo reduce y comprime.
-- Antes de implementar el panel, mostrar 2–3 alternativas de diseño (regla del proyecto).
-- Planes gratuitos de Workers/R2/Pages deberían alcanzar; revisar límites vigentes en el panel de Cloudflare.
+**Límites conocidos:**
+- **Peso y velocidad de las fotos (principal pendiente):** las fotos son de 2048 px; en una muestra de 40, media 224 KB, mediana 142 KB, máximo 2,8 MB, y cada una tarda del orden de 1 s en el servidor de fotos (1,5–7 s en las pruebas con varias en paralelo). El Worker las sirve con caché de solo 60 s. Opciones: (a) subir las fotos ya reducidas (~800 px); (b) redimensionar con Cloudflare Images/Image Resizing en un dominio propio; (c) caché larga delante del Worker. Hay que revisar los límites vigentes de solicitudes del plan gratuito de Workers si el tráfico de Instagram crece.
+- Google puede limitar las peticiones al CSV con mucho tráfico simultáneo; el catálogo ya guarda copia en el celular y actualiza solo al volver tras 5 minutos. Si hiciera falta, la salida es un proxy con caché de unos minutos (Pages Function).
+- Si se borra y recrea la pestaña `Lis-de-Pro-y-Ser`, cambia el `gid`: actualizar `SHEET_GID`.
+- Un panel para subir fotos desde el catálogo sigue siendo posible más adelante (ver el plan en el historial de git de este archivo).
 
 ## 7. Cloudflare Pages: por qué no se actualiza
 
@@ -103,15 +98,19 @@ Notas técnicas:
 - Soluciones: (1) subida directa con `wrangler pages deploy` (inmediata, se repite en cada cambio); (2) **conectar el proyecto a GitHub desde el panel de Cloudflare** (lo hace el dueño con un clic de autorización; luego se actualiza solo). La segunda es la adecuada para entregar al cliente.
 - **[PENDIENTE]** Se ofreció subir la versión actual por subida directa; no se ha hecho.
 
-## 8. Decisiones abiertas (pendientes del dueño)
+**Verificado el 2026-10-20:** la subida directa funciona. `wrangler` 4.151 (copia en el caché de npx) con sesión OAuth y permiso `pages (write)`; el proyecto tiene 3 despliegues de producción desde `main` y el último, de hace un mes, salió de esta carpeta (`0f60bdb`). Se hizo un despliegue **solo de vista previa** (`--branch prueba`) y la producción no cambió. Para desplegar **no subir la raíz del repo** (contiene capturas sueltas, el clon de LUNE y las bitácoras): armar una carpeta temporal con solo `index.html` y `assets/`, y ejecutar `wrangler pages deploy <carpeta> --project-name catalogo-supremenails --branch <rama>` (producción = `main`). El token no lista permiso de R2: repetir `wrangler login` solo si algún día se usa R2.
 
-1. **¿Cuál precio es el público?** (Precio de venta 1 o 2.)
-2. **¿Dónde vive la disponibilidad?** Columna Sí/No en la Base (lo que pidió el dueño) o el archivo de R2 de la app de captura. Hay que elegir una sola fuente.
-3. ¿El catálogo público muestra **solo productos con foto**, o también los disponibles sin foto (con imagen provisional)? Pregunta pendiente desde antes: ¿"tiene foto" significa la columna Sí/No o que la foto exista realmente en R2?
-4. **Autorización** para que el catálogo use el bucket de producción (se propuso empezar solo leyendo).
-5. Confirmar la **dirección pública** de las fotos (dominio público del bucket o ruta por Worker).
-6. Cuál proyecto de Cloudflare Pages es el oficial (ver sección 2).
-7. Entrega al cliente: que tenga su propia cuenta de Cloudflare y de GitHub (transferir el repo, dejar Worker/R2/Pages bajo su cuenta, guía de una página con cambiar contraseña, agregar un producto y qué hacer si algo falla).
+## 8. Decisiones abiertas y pendientes
+
+**Resueltas el 2026-10-20:** precio público = Precio de venta 1; visibilidad = columna «Visible en catálogo» (`SI`); las fotos están en el Sheet; no se hará por ahora el panel de subida de fotos; Precio 2 y la lista completa pueden quedar accesibles para quien descargue el CSV; la categoría se crea sola desde el Sheet.
+
+**Pendientes:**
+1. **Marcar `SI`** en `Visible en catálogo` los productos que se quieren mostrar (el dueño dijo que lo haría con todos los que tienen foto, salvo `SEMIF006` a `SEMIF009`). Hoy hay 47.
+2. **Revisar y aprobar** la vista previa en un celular real, y luego fusionar la rama a `main` y publicar en producción.
+3. **Peso de las fotos** (sección 6). El dueño ya optimizó las 18 más pesadas **conservando las mismas claves en R2** (las URL de «Enlace foto 1…8» no cambian; R2 no se vacía). **Siguiente paso, solo cuando el dueño lo confirme (no implementado):** copias livianas en `/fotos/web400/{SKU}/{n}.webp` (tarjetas) y `/fotos/web800/{SKU}/{n}.webp` (ficha), cambiando en la URL `/fotos/{SKU}/{n}.jpg` por esas rutas, con respaldo a la foto original si la copia no existe (evento `error` de la imagen). Entonces también se puede subir `PRODUCTOS_POR_PAGINA`.
+4. Cuál proyecto de Cloudflare Pages es el oficial para Instagram (`catalogo-supremenails`, `catalogo-supreme-nails-edit` o `supreme-nails`) y **conectar Pages a GitHub** con un clic del dueño para que se actualice con cada push.
+5. Corregir en el Sheet los errores de ortografía listados en `NOTAS_CORRECCIONES.md` #15.
+6. Entrega al cliente: que tenga su propia cuenta de Cloudflare y GitHub (transferir el repo, dejar Pages bajo su cuenta) y una guía de una página: marcar `SI`, pegar el enlace de foto, no renombrar encabezados.
 
 ## 9. Accesos y herramientas (en el computador 1, a 2026-10-19)
 
@@ -135,10 +134,8 @@ El dueño pidió editar las fotos de una carpeta de prueba (12 frascos de gel "S
 
 1. Clonar: `git clone https://github.com/trespapaginas-source/catalogo-supremenails` y leer `CLAUDE.md`, `NOTAS_CORRECCIONES.md` y este archivo.
 2. Autenticar `gh` y `wrangler`; reconectar el conector de Google Drive si hace falta.
-3. Resolver primero las **decisiones abiertas** (sección 8, puntos 1–3 y 5), porque bloquean el diseño del panel y de la lectura del Sheet.
-4. Conectar Cloudflare Pages a GitHub (sección 7) o hacer subida directa.
-5. Recomendado: crear una pestaña `Catalogo_Web` limpia en la Base antes de programar la lectura.
-6. Después: Worker del catálogo (lectura del Sheet + lectura de fotos del bucket), luego panel de subida con contraseña, prueba en celular real, guía y entrega al cliente.
+3. Cambiar a la rama `feat/catalogo-desde-sheet` (`git switch feat/catalogo-desde-sheet`) y revisar la sección 3.
+4. Seguir con los pendientes de la sección 8.
 
 ## 12. Historial resumido del trabajo previo
 
@@ -146,3 +143,4 @@ El dueño pidió editar las fotos de una carpeta de prueba (12 frascos de gel "S
 - Se corrigieron múltiples problemas de layout (brechas de precio, tamaños de foto, desbordes de título, alineación del buscador, tamaño de foto en el modal, panel de favoritos, el atributo `[hidden]` que perdía contra `display`). Detalle en `NOTAS_CORRECCIONES.md`.
 - Un intento de sincronizar con GitHub chocó con cambios locales; el dueño ordenó descartar lo local y trabajar solo con GitHub.
 - Se activó GitHub Pages como enlace público mientras se diagnosticaba Cloudflare.
+- **2026-10-20:** el catálogo pasó a leer la Base de Google en vivo (rama `feat/catalogo-desde-sheet`); se verificó el despliegue en Cloudflare con una vista previa; se midieron las fotos (sección 6). Se descartó la pestaña intermedia `Catalogo_Web` y el Worker/panel de fotos.

@@ -74,6 +74,39 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 - **Solución:** se reconstruyó como un panel (`fav-drawer`) de posición fija anclado bajo el ícono de corazón, con fondo oscurecido (`fav-drawer-backdrop`) detrás. Cerrar con la X, con clic en el fondo oscurecido, o con Esc — en los tres casos simplemente se ocultan clases, sin tocar `showPage()`, así que la categoría que se estaba viendo permanece exactamente igual detrás.
 - **Lección:** cuando el usuario pida ver una "lista" de algo (favoritos, carrito, notificaciones) sin mencionar explícitamente una página dedicada, la opción más pulida y menos disruptiva por defecto es un **panel/dropdown superpuesto que preserva el estado de la pantalla actual**, no una navegación de página completa — reservar la navegación de página completa para secciones que el usuario recorre con intención de quedarse (como las categorías del catálogo).
 
+## 12. El CSV «gviz» de Google Sheets pierde encabezados y celdas (resuelto)
+- **Síntoma:** al leer la Base con `.../gviz/tq?tqx=out:csv&sheet=...`, los encabezados «Precio de venta 1/2» llegaban vacíos y el catálogo no encontraba la columna del precio.
+- **Causa:** `gviz` infiere un tipo por columna (número o texto) y **borra las celdas del tipo minoritario**. El texto del encabezado en una columna numérica se pierde, y una celda suelta que no encaje con el resto de su columna (p. ej. «S/N» entre números) también se pierde en silencio.
+- **Solución:** leer con `.../export?format=csv&gid=<gid de la pestaña>`, que entrega el CSV tal cual, con todos los encabezados y sin caché (`no-store`). Las columnas se buscan por el **nombre** del encabezado, no por su posición.
+- **Lección:** no usar `gviz` para datos con columnas mixtas. Si se borra y recrea la pestaña, cambia el `gid` (constante `SHEET_GID` en `index.html`).
+
+## 13. Cientos de fotos pedidas al desplazarse rápido (resuelto; sustituido por la paginación, ver #17)
+- **Síntoma:** al recorrer a toda velocidad las 577 tarjetas de Semipermanentes, el navegador pedía cientos de fotos de 2048 px que nadie llegaba a ver; las visibles quedaban en cola y tardaban más de 14 s.
+- **Causa:** `loading="lazy"` nativo decide por distancia al viewport, no por el tiempo que la tarjeta permanece a la vista; las peticiones en curso no se cancelan.
+- **Solución:** las tarjetas del listado llevan `data-src` y una foto solo se pide si su tarjeta se queda a la vista `PHOTO_DWELL_MS` (160 ms). Resultado medido: una pasada completa por las 577 tarjetas pidió 12 fotos.
+- **Lección:** con listas largas y fotos pesadas, el `lazy` nativo no basta. *(La carga por tandas de 36 con centinela y la espera de 160 ms se eliminaron al paginar: ahora solo existen 24 tarjetas en pantalla. Ver #17.)*
+
+## 14. Pruebas con `IntersectionObserver` en una pestaña en segundo plano
+- **Síntoma:** en el navegador de pruebas la carga progresiva «no avanzaba» y parecía un bug.
+- **Causa:** la pestaña de pruebas estaba en segundo plano y el navegador no ejecuta ahí el ciclo de render del que depende `IntersectionObserver`.
+- **Lección:** antes de dar por fallida una prueba con observadores, animaciones o `IntersectionObserver`, **poner la pestaña al frente** (`tabs_select`) y repetir.
+
+## 15. Datos del Sheet en MAYÚSCULAS y sin tildes
+- La Base trae los nombres en mayúsculas, sin tildes y con errores de dedo. El catálogo los presenta con `prettyName()` (Título, tildes de un diccionario `ACCENTS`, `15ML` → `15 ml`, marcas como `M&Y` intactas). Los errores de ortografía en español conocidos (`EXTENCION`, `ACRILCO`, `COLOLRES`) se corrigen ahí; los demás hay que corregirlos **en el Sheet**: `WITHE`/`WITHIE`, `CHESSE`, `BLOSSON`, `PAINLING`/`PAILING`, `ARITOS`, `XUND`, `LARGUE`, `PLATINIUM`, y la marca escrita `Vanessa`/`Vanesa`, `KNAILS`/`Kinails`.
+- Para que una palabra nueva lleve tilde, agregarla a `ACCENTS` (clave sin tilde, en minúscula).
+
+## 16. El contador de favoritos no aparecía al recargar la página (resuelto)
+- **Causa:** `updateFavBadge()` solo se llamaba al agregar o quitar un favorito, nunca al iniciar.
+- **Solución:** se llama en `init()`.
+
+## 17. Listado paginado de 24 en 24 con la página en la URL
+- **Problema:** una categoría de 400-500 productos dibujaba todas las tarjetas (por tandas) y acumulaba fotos pesadas.
+- **Solución:** `PRODUCTOS_POR_PAGINA = 24` (constante al inicio de la sección «Listado de una categoría»; subirla cuando las fotos sean livianas). Solo se dibujan, y solo piden foto, las tarjetas de la página actual; los datos ya están en memoria y el cambio de página es instantáneo (6 clics seguidos tardaron 40 ms). Fotos con `loading="lazy" decoding="async" width="400" height="400"`.
+- **URL:** `#/gel/2` (la página 1 es `#/gel`). Una página fuera de rango o inválida (`/99`, `/0`, `/abc`) muestra la última o la primera y **corrige la URL** (`syncUrl()`). Cada cambio de página en la lista normal es una entrada del historial (`history.state = {cat, entry, d}`; `d` cuenta las páginas recorridas para que «Todas las categorías» salte directo a la portada con `history.go(-(d+1))`).
+- **Buscador:** filtra los productos de **toda** la categoría (`view.all`), con la misma lógica de siempre. Los resultados se paginan igual, **no** tocan la URL ni el historial; cada texto nuevo vuelve a la página 1 (con 140 ms de espera al teclear) y al borrar el texto se regresa a la página que se estaba viendo (`view.browsePage`). El contador de arriba dice «N resultados»; en celular, mientras se busca, baja debajo del control.
+- **Controles:** píldora igual a la del buscador y selector de columnas. Escritorio: «Mostrando 25–48 de 312 productos» a la izquierda y «‹ Anterior 1 2 3 4 5 … 25 Siguiente ›» a la derecha (siempre 7 casillas para que no se muevan). Celular (≤760 px): «‹ Página 2 de 12 ›» y el «Mostrando…» debajo. Con 24 productos o menos no se muestra nada. Con teclado el foco permanece en los controles al redibujarse.
+- **Lección:** el contenedor que scrollea en escritorio es la grilla (`.listing>.grid`) y en celular la página; al cambiar de página se hace `catGrid.scrollTop = 0` y, si el encabezado del listado quedó fuera de vista, se sube la página hasta él (`scrollToListStart()`). `performance.getEntriesByType('resource')` solo lista una foto cuando **termina** de descargar: para contar peticiones hay que esperar o mirar la red.
+
 ---
 
 ## Reglas generales a respetar de aquí en adelante
@@ -88,3 +121,6 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 9. **`aspect-ratio` no se combina con un `max-height`/`max-width` fijo en el mismo elemento** si se necesita una proporción exacta (ej. cuadrado 1:1) — limitar el tamaño desde el contenedor padre (ancho), no desde una segunda restricción de tamaño en el mismo elemento.
 10. **Listas superpuestas (favoritos, carrito, notificaciones) van en un panel/dropdown que preserva la pantalla actual** por defecto, no en una navegación de página completa — a menos que el usuario pida explícitamente una página dedicada.
 11. **Antes de entregar cualquier cambio visual, verificar con capturas de pantalla real** (no solo revisar el código) — abrir, interactuar (clic, hover, expandir) y confirmar visualmente que coincide con lo pedido, en desktop y mobile.
+12. **Datos de Google Sheets: leer con `export?format=csv&gid=`, nunca con `gviz`** (ver entrada 12), y buscar columnas por nombre de encabezado.
+13. **Listas largas con fotos pesadas:** paginar (`PRODUCTOS_POR_PAGINA`) y dibujar solo la página actual (entrada 17); nunca dibujar cientos de tarjetas con fotos. Probar siempre con la pestaña al frente (entrada 14).
+14. **Rutas con página (`#/slug/N`):** toda página nueva de la lista normal es una entrada del historial; si se añade otra pantalla con su propia ruta, mantener el contador `d` de `history.state` o «Todas las categorías» no volverá a la portada.
