@@ -129,6 +129,15 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 - **Estado:** verificado en escritorio (secuencia: sube → foto oculta → cambia → visible). **Falta confirmar en un iPhone real.** Si persiste, probar quitar el fundido de la foto (`.is-swap`) o dibujar la foto como `background-image`.
 - **Lección:** los fallos de dibujo de Safari/iOS no aparecen en el emulador de Chrome; para una ficha con scroll, evitar cambiar imágenes que están fuera de pantalla y probar siempre en un iPhone real antes de dar el arreglo por cerrado.
 
+## 21. Favoritos sustituidos por carrito con cantidades, barra inferior y ciudad sugerida (2026-10-21)
+- **Pedido del dueño:** «Agregar al carrito» en lugar de favoritos; carrito con animación llamativa hasta el primer toque; botón final tipo pedido por WhatsApp; nombre y ciudad, con la ciudad rellenada sola según la ubicación.
+- **Decisiones (elegidas con el dueño):** icono de carrito arriba **+ barra inferior** («2 productos · $ 2.300 · Ver carrito»); **cantidades** por producto (− 2 +) con total estimado; botón **«Hacer pedido por WhatsApp»** (no «comprar», porque no hay cobro en la página); ciudad por IP desde **función propia** (sin terceros).
+- **Cómo funciona:** el carrito vive en `localStorage` (`cart` = SKU→cantidad, `cartSeen`, `customer`). Cada variante es su propio SKU. Los favoritos guardados antes **no se migran** (clave `favorites` ignorada). El botón de la tarjeta agrega/quita; los productos con variantes abren la ficha. Animación del carrito (`body:not(.cart-seen)`): onda + vaivén cada 2,6 s; se detiene al abrir el carrito por primera vez y se respeta `prefers-reduced-motion`. Al agregar, la foto «vuela» al carrito (`flyToCart`, Web Animations API).
+- **Ciudad:** `functions/api/ciudad.js` (Cloudflare Pages Function) devuelve `request.cf.city`. El catálogo la pide **solo al abrir el pedido**, solo si el campo está vacío y no se recuerda una ciudad; es editable y muestra «Detectada por tu conexión». Si la función no existe (GitHub Pages, servidor local) el campo queda vacío y se escribe a mano. **Precisión limitada:** desde una conexión de Malambo/Barranquilla devolvió «Barranquilla»; con datos móviles puede decir otra ciudad.
+- **Despliegue:** para que la función exista hay que desplegar **desde la raíz del repo** (donde está `functions/`): `wrangler pages deploy <carpeta con index.html y assets> --project-name catalogo-supremenails ...`. Si se despliega desde otra carpeta, `/api/ciudad` no se publica.
+- **Detalle iOS:** los campos del pedido usan 16 px en celular; con menos, Safari hace zoom al enfocarlos.
+- **Lección:** al renombrar un sistema (favoritos→carrito) buscar también los nombres con mayúsculas intermedias (`updateFavBadge`): una llamada olvidada en `init()` dejó el catálogo sin cargar hasta que se detectó en la consola.
+
 ---
 
 ## Reglas generales a respetar de aquí en adelante
@@ -149,3 +158,4 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 15. **Contar tarjetas, no filas:** todo número que ve el cliente (portada, categoría, «Mostrando…», «N resultados») sale de `ITEMS`; `PRODUCTS` es solo la lista de filas con SKU para favoritos y cotización (entrada 18).
 16. **Cambio de foto con fundido:** precargar y decodificar la foto nueva antes de ocultar la anterior (entrada 19); nunca cambiar `src` y mostrar de inmediato una imagen remota que aún no cargó.
 17. **Probar en iPhone real** todo cambio en ventanas con scroll, capas, `transform`, `backdrop-filter` o cambios de imagen (entrada 20): el emulador de escritorio no reproduce los fallos de dibujo de Safari.
+18. **Tras renombrar un sistema, buscar todas las variantes del nombre** (`grep -i fav` y también `Fav` dentro de camelCase) y abrir la página con la consola visible antes de entregar (entrada 21).
