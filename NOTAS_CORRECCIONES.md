@@ -122,6 +122,13 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 - **Arreglo:** `.modal-photo` sin relleno y `img` al 100 % (`object-fit:contain`, nunca recorta); X de 38 px, blanca translúcida, sobre la foto (solo `.product-modal>.modal-close`; las de favoritos y pedido no cambian); borde del visor en celular 12 px; se quitó la proporción 6:5 de escritorio. Es el mismo visor para productos simples y con variantes. En `showGalleryImage` la foto nueva se precarga y decodifica (`Image.decode()`) **antes** del fundido; un contador (`galToken`) descarta cambios viejos si se tocan varias opciones seguidas; tope de 2,5 s.
 - **Lección:** cambiar `img.src` no cambia lo que se ve hasta que la imagen nueva carga. Para fotos remotas, precargar y decodificar primero y hacer el fundido después; y medir el estado (`img.complete`) en el tiempo antes de dar el salto por resuelto.
 
+## 20. iPhone (Safari): la foto del visor queda «cortada» tras elegir una variante que estaba abajo (2026-10-21)
+- **Síntoma (solo en iPhone, no se ve en escritorio ni simulando celular):** con una ficha de 34 opciones, se baja por la lista, se elige la 038 y al volver a subir la foto aparece dibujada solo hasta donde llegaba la parte visible; arriba queda en blanco. Captura del dueño (iPhone 15 Pro Max, Safari).
+- **Causa probable (no se pudo reproducir fuera de iOS):** Safari no dibuja la parte de una imagen que está fuera de pantalla cuando esa imagen cambia mientras se desplaza el contenedor; se combinaba con `transform` residual en `.product-modal` (`translateY(0) scale(1)`), `backdrop-filter` en la X dentro del contenedor con scroll, esquinas redondeadas con `overflow:hidden` y una transición de `opacity` en la imagen.
+- **Medidas:** (1) al elegir variante o miniatura, la ficha sube sola hasta la foto (`scrollModalToPhoto`) y el cambio de foto espera a que esté a la vista (`waitPhotoInView`); (2) `transform:none` al terminar de abrir; (3) la X sin `backdrop-filter`; (4) la foto del visor en su propia capa (`translateZ(0)`, `isolation:isolate`); (5) `overscroll-behavior:contain`.
+- **Estado:** verificado en escritorio (secuencia: sube → foto oculta → cambia → visible). **Falta confirmar en un iPhone real.** Si persiste, probar quitar el fundido de la foto (`.is-swap`) o dibujar la foto como `background-image`.
+- **Lección:** los fallos de dibujo de Safari/iOS no aparecen en el emulador de Chrome; para una ficha con scroll, evitar cambiar imágenes que están fuera de pantalla y probar siempre en un iPhone real antes de dar el arreglo por cerrado.
+
 ---
 
 ## Reglas generales a respetar de aquí en adelante
@@ -141,3 +148,4 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 14. **Rutas con página (`#/slug/N`):** toda página nueva de la lista normal es una entrada del historial; si se añade otra pantalla con su propia ruta, mantener el contador `d` de `history.state` o «Todas las categorías» no volverá a la portada.
 15. **Contar tarjetas, no filas:** todo número que ve el cliente (portada, categoría, «Mostrando…», «N resultados») sale de `ITEMS`; `PRODUCTS` es solo la lista de filas con SKU para favoritos y cotización (entrada 18).
 16. **Cambio de foto con fundido:** precargar y decodificar la foto nueva antes de ocultar la anterior (entrada 19); nunca cambiar `src` y mostrar de inmediato una imagen remota que aún no cargó.
+17. **Probar en iPhone real** todo cambio en ventanas con scroll, capas, `transform`, `backdrop-filter` o cambios de imagen (entrada 20): el emulador de escritorio no reproduce los fallos de dibujo de Safari.

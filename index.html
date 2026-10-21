@@ -54,7 +54,7 @@ button{border:0;background:none;cursor:pointer}
 .category{font-size:12px;letter-spacing:.42em;color:#d19abb;text-transform:uppercase;margin-bottom:4px}.title{font:400 clamp(34px,3.6vw,64px)/.9 var(--serif);letter-spacing:-.04em;margin:0}.lead{font-size:13px;line-height:1.45;color:#56545f;max-width:330px;padding-left:22px;border-left:1px solid #777}
 .hero-promo{height:55%;border-radius:70px;background:#f0d6e5;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 26px}.hero-promo .dash{width:36px;height:1px;background:#7c7480}.hero-promo span{font-size:8px;line-height:2;letter-spacing:.34em;color:#55505a;text-transform:uppercase}
 .grid{display:grid;gap:16px;align-content:start;grid-template-columns:repeat(3,1fr)}
-.card{background:linear-gradient(180deg,#f9f7f8,#fdfcfd);border-radius:12px;position:relative;overflow:visible;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:stretch;min-height:0}.card .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f6f5f5;border-radius:10px}.card .photo img{height:97%;width:97%;object-fit:contain;filter:drop-shadow(0 10px 8px #0001)}.info{padding:8% 4% 2% 4%;display:flex;flex-direction:column;min-width:0}.code-row{align-self:flex-start;display:flex;align-items:center;gap:8px}.code{background:#f3dce8;padding:5px 14px;border-radius:30px;font-size:9px;letter-spacing:.14em}.color-dot{width:15px;height:15px;border-radius:50%;flex:none;box-shadow:0 0 0 2px #fff,0 0 0 3px #00000014}.name{font-size:16px;font-weight:500;line-height:1.18;margin:13px 0 2px;letter-spacing:.01em;overflow-wrap:anywhere}.size{font-size:12px;margin:0 0 14px;color:#75727b}.desc{font-size:10px;line-height:1.45;color:#62616b;margin:0 0 14px}.price{margin-top:auto;align-self:flex-start;max-width:100%;text-align:center;background:#efd0e0;border-radius:28px;padding:8px 16px;font-size:16px;font-weight:500;white-space:nowrap}
+.card{background:linear-gradient(180deg,#f9f7f8,#fdfcfd);border-radius:12px;position:relative;overflow:visible;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:stretch;min-height:0}.card .photo{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f6f5f5;border-radius:10px}.card .photo img{height:100%;width:100%;object-fit:cover;object-position:center}.info{padding:8% 4% 2% 4%;display:flex;flex-direction:column;min-width:0}.code-row{align-self:flex-start;display:flex;align-items:center;gap:8px}.code{background:#f3dce8;padding:5px 14px;border-radius:30px;font-size:9px;letter-spacing:.14em}.color-dot{width:15px;height:15px;border-radius:50%;flex:none;box-shadow:0 0 0 2px #fff,0 0 0 3px #00000014}.name{font-size:16px;font-weight:500;line-height:1.18;margin:13px 0 2px;letter-spacing:.01em;overflow-wrap:anywhere}.size{font-size:12px;margin:0 0 14px;color:#75727b}.desc{font-size:10px;line-height:1.45;color:#62616b;margin:0 0 14px}.price{margin-top:auto;align-self:flex-start;max-width:100%;text-align:center;background:#efd0e0;border-radius:28px;padding:8px 16px;font-size:16px;font-weight:500;white-space:nowrap}
 .footer{display:flex;align-items:center;justify-content:space-between;font-size:8px;letter-spacing:.38em;color:#55505b;text-transform:uppercase}.footer .line{flex:1;height:1px;background:#aaa;margin:0 28px}
 /* cover / home page — Instagram bio-link style */
 .cover .content{grid-template-rows:9% 15% 65% 11%}
@@ -117,15 +117,18 @@ button{border:0;background:none;cursor:pointer}
 .modal-overlay{position:fixed;inset:0;background:#2a222690;backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .modal-overlay.is-open{opacity:1;pointer-events:auto}
 .product-modal,.checkout-modal{background:#fff;border-radius:20px;box-shadow:0 30px 80px #00000030;transform:translateY(18px) scale(.97);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s ease;position:relative}
-.modal-overlay.is-open .product-modal,.modal-overlay.is-open .checkout-modal{transform:translateY(0) scale(1);opacity:1}
+.modal-overlay.is-open .product-modal,.modal-overlay.is-open .checkout-modal{transform:none;opacity:1}
 .product-modal{max-width:440px;width:100%;max-height:88vh;overflow-y:auto}
 .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:#f4edf1;display:flex;align-items:center;justify-content:center;color:#5c5560;z-index:2;transition:background .2s ease}
 .modal-close:hover{background:#ecdee7}
 .modal-close svg{width:14px;height:14px}
 .modal-photo{position:relative;aspect-ratio:1/1;width:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#faf5f8,#fff);border-radius:20px 20px 0 0;padding:0;overflow:hidden}
-.modal-photo img{width:100%;height:100%;object-fit:contain}
+.modal-photo img{width:100%;height:100%;object-fit:cover;object-position:center}
+.modal-photo{isolation:isolate;-webkit-transform:translateZ(0);transform:translateZ(0)}
+.modal-photo img{-webkit-transform:translateZ(0);transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.product-modal{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}   /* el visor es siempre cuadrado: una foto de otra proporción se recorta al centro */
 /* La X vive sobre la foto: círculo blanco translúcido legible sobre cualquier fondo */
-.product-modal>.modal-close{top:12px;right:12px;width:38px;height:38px;background:#ffffffe6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 4px 14px #00000026;color:#3d3640;transition:background .2s ease,transform .15s ease}
+.product-modal>.modal-close{top:12px;right:12px;width:38px;height:38px;background:#fffffff2;box-shadow:0 4px 14px #00000026;color:#3d3640;transition:background .2s ease,transform .15s ease}
 .product-modal>.modal-close:hover{background:#fff}.product-modal>.modal-close:active{transform:scale(.92)}
 .product-modal>.modal-close svg{width:15px;height:15px}
 .modal-body{padding:22px 26px 26px}
@@ -207,7 +210,7 @@ button{border:0;background:none;cursor:pointer}
 /* fotos: aparecen suavemente y, si faltan, muestran el logo en lugar de una imagen rota */
 .card .photo img{opacity:0;transition:opacity .4s ease}
 .card .photo.is-ready img{opacity:1}
-.card .photo.is-placeholder.is-ready img{opacity:.42;width:54%;height:auto;filter:none}
+.card .photo.is-placeholder.is-ready img{opacity:.42;width:54%;height:auto;object-fit:contain;filter:none}
 /* ---- paginación: misma píldora que el buscador y el selector de columnas ---- */
 .pager{flex:none;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;padding-right:4px}
 .pager[hidden]{display:none}
@@ -286,7 +289,7 @@ a.whatsapp-btn{text-decoration:none}
 .modal-photo{touch-action:pan-y}
 .modal-photo img{transition:opacity .16s ease}
 .modal-photo img.is-swap{opacity:0}
-.modal-photo.is-placeholder img{width:46%;height:46%;opacity:.42;filter:none}
+.modal-photo.is-placeholder img{width:46%;height:46%;object-fit:contain;opacity:.42;filter:none}
 .gal-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:#ffffffeb;box-shadow:0 6px 16px #0000001f;display:flex;align-items:center;justify-content:center;color:#5c5560;z-index:1;transition:transform .18s ease,background .2s ease,opacity .2s ease}
 .gal-nav:hover{background:#fff}.gal-nav:active{transform:translateY(-50%) scale(.9)}
 .gal-nav svg{width:16px;height:16px}.gal-prev{left:12px}.gal-next{right:12px}.gal-nav[hidden]{display:none}
@@ -354,6 +357,25 @@ body[data-cols="1"] .grid{grid-template-columns:minmax(0,640px);justify-content:
 body[data-cols="1"] .card{grid-template-columns:auto 1fr;padding:22px}
 body[data-cols="1"] .name{font-size:20px}
 body[data-cols="1"] .desc{font-size:12px}
+}
+/* ---------- Tarjeta: la foto llega hasta el borde (sin marco blanco); el aire pasa a la zona de texto ---------- */
+.card,.fav-drawer .card{padding:0}
+.card .photo{border-radius:12px 12px 0 0}
+.fav-drawer .info{padding:8px 10px 10px}
+@media (min-width:761px){
+  .card{grid-template-columns:170px 1fr}
+  .card .photo{border-radius:12px 0 0 12px;align-self:start}
+  .fav-drawer .card .photo{border-radius:12px 12px 0 0}
+  .info{padding:22px 16px 12px 0}
+  .fav-drawer .info{padding:8px 10px 10px}
+  body[data-cols="1"] .card{padding:0}
+  body[data-cols="1"] .info{padding:26px 24px 16px 0}
+}
+@media (max-width:760px){
+  .card .photo{border-radius:12px 12px 0 0}
+  .info{padding:8px 10px 10px}
+  body[data-cols="3"] .card{padding:0}
+  body[data-cols="3"] .info{padding:6px 7px 8px}
 }
 </style>
 </head>
@@ -1262,28 +1284,50 @@ function setModalFavState(isFav, pending){
   modalFavLabel.textContent = pending ? 'Elige una opción' : isFav ? 'En tus favoritos' : 'Agregar a favoritos';
 }
 
-let galToken = 0;     // invalida cambios de foto anteriores si el usuario toca rápido otra opción
+const productModalEl = document.querySelector('#productModalOverlay .product-modal');
+function scrollModalToPhoto(){ if(productModalEl.scrollTop > 2) productModalEl.scrollTo({top:0, behavior:'smooth'}); }
+function waitPhotoInView(cb){                       // llama a cb cuando la foto ya se ve completa (o tras 0,8 s como tope)
+  const t0 = performance.now();
+  const tick = ()=>{
+    const inView = modalPhoto.getBoundingClientRect().top >= productModalEl.getBoundingClientRect().top - 2;
+    if(inView || performance.now() - t0 > 800) cb(); else requestAnimationFrame(tick);
+  };
+  tick();
+}
+let galToken = 0;     // invalida cambios de foto anteriores si el usuario toca rápido otra opción u otro producto
 function showGalleryImage(animate){
   const src = gallery.imgs[gallery.i];
   const token = ++galToken;
-  const swap = ()=>{
-    if(token !== galToken) return;
+  const apply = ()=>{
     delete modalImg.dataset.fallback; delete modalImg.dataset.retry;
     modalPhoto.classList.toggle('is-placeholder', !src);
     modalImg.alt = gallery.name;
     modalImg.src = src || 'assets/logo-suprema.png';
-    modalImg.classList.remove('is-swap');
   };
-  if(!animate || !src){ swap(); }
-  else {
-    // Primero se descarga y decodifica la foto nueva; solo entonces se hace el fundido. Así nunca se ve
-    // la foto anterior "saltar" a la nueva mientras esta termina de cargar. La foto vieja se queda hasta que la nueva está lista.
+  const reveal = ()=>{ if(token === galToken) modalImg.classList.remove('is-swap'); };
+  // Descarga y decodifica la foto nueva y avisa cuando está lista (o a los 2,5 s si la red va muy lenta).
+  const whenReady = cb=>{
     let fired = false;
-    const ready = ()=>{ if(fired || token !== galToken) return; fired = true; modalImg.classList.add('is-swap'); setTimeout(swap, 150); };
-    const pre = new Image();
-    pre.src = src;
-    (pre.decode ? pre.decode() : Promise.resolve()).then(ready, ready);
-    setTimeout(ready, 2500);                  // red muy lenta: se cambia igual y el aviso de error de la foto se encarga del resto
+    const go = ()=>{ if(fired || token !== galToken) return; fired = true; cb(); };
+    const pre = new Image(); pre.src = src;
+    (pre.decode ? pre.decode() : Promise.resolve()).then(go, go);
+    setTimeout(go, 2500);
+  };
+  if(!src){ apply(); reveal(); }
+  else if(animate){
+    // Cambio de variante/foto con la ficha abierta: la foto vieja se queda hasta que la nueva esté lista y entonces se hace el fundido.
+    // Se espera además a que la foto esté a la vista: Safari en iPhone no dibuja bien la parte de una imagen que está fuera de pantalla
+    // cuando cambia (quedaba un corte justo donde terminaba la zona visible).
+    whenReady(()=>waitPhotoInView(()=>{ modalImg.classList.add('is-swap'); setTimeout(()=>{ if(token !== galToken) return; apply(); reveal(); }, 150); }));
+  } else {
+    // Ficha recién abierta (otro producto): la foto del producto anterior se oculta al instante, sin fundido,
+    // y la nueva aparece solo cuando ya está descargada. Nunca se ve la foto vieja mientras llega la nueva.
+    modalImg.style.transition = 'none';
+    modalImg.classList.add('is-swap');
+    void modalImg.offsetWidth;
+    modalImg.style.transition = '';
+    apply();
+    whenReady(reveal);
   }
   [...modalThumbs.children].forEach((b,k)=>b.setAttribute('aria-current', k===gallery.i?'true':'false'));
   const next = gallery.imgs[(gallery.i+1) % gallery.imgs.length];
@@ -1295,7 +1339,7 @@ function stepGallery(d){
   gallery.i = (gallery.i + d + n) % n;
   showGalleryImage(true);
 }
-function goGallery(i){ if(i !== gallery.i){ gallery.i = i; showGalleryImage(true); } }
+function goGallery(i){ if(i !== gallery.i){ gallery.i = i; scrollModalToPhoto(); showGalleryImage(true); } }
 
 /* pinta la ficha con los datos de una fila o de un grupo */
 function fillModal(d, animate){
@@ -1388,6 +1432,7 @@ function openGroupModal(id){
 function selectOption(i){
   if(!modalGroup) return;
   modalGroup.sel = modalGroup.sel === i ? -1 : i;
+  scrollModalToPhoto();
   modalOptions.querySelectorAll('.mopt').forEach((b,k)=>b.setAttribute('aria-pressed', k === modalGroup.sel));
   showGroupView(true);
 }
