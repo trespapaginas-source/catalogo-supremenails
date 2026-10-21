@@ -116,6 +116,12 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 - **Decisión del dueño:** las líneas `SEMICH…` (Charlotte) y `SEMIKN…` (Kinails) **no se agrupan**: cada una sigue como producto aparte, sin variantes, como las maneja la empresa. No se agrupa por parecido de nombres; toda agrupación sale de la columna «Código padre» de la hoja.
 - **Lección:** si en el futuro la columna «Código padre» o «Variante» cambiara de nombre, el catálogo no se rompe: cada fila vuelve a ser su propio producto. «Variante» y «Código padre» no son obligatorias.
 
+## 19. Visor de producto: foto con margen, X fuera de la foto y «salto» al cambiar de variante (2026-10-21)
+- **Problema 1:** la foto del visor tenía 24 px de relleno y se encogía al 88 %, así que ocupaba solo una parte del contenedor; la X quedaba sobre el margen, no sobre la imagen.
+- **Problema 2:** al elegir otra variante se veía la foto anterior y luego «saltaba» a la nueva. Medido: a los 175 ms la `<img>` ya era visible con el `src` nuevo pero seguía descargando (~1 s); el navegador pinta el bitmap anterior hasta que llega el nuevo.
+- **Arreglo:** `.modal-photo` sin relleno y `img` al 100 % (`object-fit:contain`, nunca recorta); X de 38 px, blanca translúcida, sobre la foto (solo `.product-modal>.modal-close`; las de favoritos y pedido no cambian); borde del visor en celular 12 px; se quitó la proporción 6:5 de escritorio. Es el mismo visor para productos simples y con variantes. En `showGalleryImage` la foto nueva se precarga y decodifica (`Image.decode()`) **antes** del fundido; un contador (`galToken`) descarta cambios viejos si se tocan varias opciones seguidas; tope de 2,5 s.
+- **Lección:** cambiar `img.src` no cambia lo que se ve hasta que la imagen nueva carga. Para fotos remotas, precargar y decodificar primero y hacer el fundido después; y medir el estado (`img.complete`) en el tiempo antes de dar el salto por resuelto.
+
 ---
 
 ## Reglas generales a respetar de aquí en adelante
@@ -134,3 +140,4 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 13. **Listas largas con fotos pesadas:** paginar (`PRODUCTOS_POR_PAGINA`) y dibujar solo la página actual (entrada 17); nunca dibujar cientos de tarjetas con fotos. Probar siempre con la pestaña al frente (entrada 14).
 14. **Rutas con página (`#/slug/N`):** toda página nueva de la lista normal es una entrada del historial; si se añade otra pantalla con su propia ruta, mantener el contador `d` de `history.state` o «Todas las categorías» no volverá a la portada.
 15. **Contar tarjetas, no filas:** todo número que ve el cliente (portada, categoría, «Mostrando…», «N resultados») sale de `ITEMS`; `PRODUCTS` es solo la lista de filas con SKU para favoritos y cotización (entrada 18).
+16. **Cambio de foto con fundido:** precargar y decodificar la foto nueva antes de ocultar la anterior (entrada 19); nunca cambiar `src` y mostrar de inmediato una imagen remota que aún no cargó.

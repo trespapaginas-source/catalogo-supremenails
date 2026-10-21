@@ -122,8 +122,12 @@ button{border:0;background:none;cursor:pointer}
 .modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:#f4edf1;display:flex;align-items:center;justify-content:center;color:#5c5560;z-index:2;transition:background .2s ease}
 .modal-close:hover{background:#ecdee7}
 .modal-close svg{width:14px;height:14px}
-.modal-photo{position:relative;aspect-ratio:1/1;width:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#faf5f8,#fff);border-radius:20px 20px 0 0;padding:24px}
-.modal-photo img{max-width:88%;max-height:88%;object-fit:contain;filter:drop-shadow(0 16px 20px #00000014)}
+.modal-photo{position:relative;aspect-ratio:1/1;width:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#faf5f8,#fff);border-radius:20px 20px 0 0;padding:0;overflow:hidden}
+.modal-photo img{width:100%;height:100%;object-fit:contain}
+/* La X vive sobre la foto: círculo blanco translúcido legible sobre cualquier fondo */
+.product-modal>.modal-close{top:12px;right:12px;width:38px;height:38px;background:#ffffffe6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 4px 14px #00000026;color:#3d3640;transition:background .2s ease,transform .15s ease}
+.product-modal>.modal-close:hover{background:#fff}.product-modal>.modal-close:active{transform:scale(.92)}
+.product-modal>.modal-close svg{width:15px;height:15px}
 .modal-body{padding:22px 26px 26px}
 .modal-code-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .modal-code-row .code{background:#f3dce8;padding:5px 14px;border-radius:30px;font-size:10px;letter-spacing:.14em}
@@ -265,7 +269,7 @@ button{border:0;background:none;cursor:pointer}
 .mopt-foot[hidden]{display:none}
 .modal-fav-btn:disabled{opacity:.55;cursor:default}
 /* con selector, el precio y favoritos quedan fijos al pie de la ficha */
-@media (min-width:761px){.product-modal.is-variants .modal-photo{aspect-ratio:6/5;padding:18px 24px}}
+
 .product-modal.is-variants .modal-footer{position:sticky;bottom:0;z-index:2;background:#fff;margin:0 -26px -26px;padding:13px 26px 18px;border-top:1px solid #f1e6ec}
 /* ---- estados de error / vacío ---- */
 .state-box{grid-column:1/-1;margin:auto;max-width:400px;text-align:center;padding:34px 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -282,7 +286,7 @@ a.whatsapp-btn{text-decoration:none}
 .modal-photo{touch-action:pan-y}
 .modal-photo img{transition:opacity .16s ease}
 .modal-photo img.is-swap{opacity:0}
-.modal-photo.is-placeholder img{max-width:46%;max-height:46%;opacity:.42;filter:none}
+.modal-photo.is-placeholder img{width:46%;height:46%;opacity:.42;filter:none}
 .gal-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:#ffffffeb;box-shadow:0 6px 16px #0000001f;display:flex;align-items:center;justify-content:center;color:#5c5560;z-index:1;transition:transform .18s ease,background .2s ease,opacity .2s ease}
 .gal-nav:hover{background:#fff}.gal-nav:active{transform:translateY(-50%) scale(.9)}
 .gal-nav svg{width:16px;height:16px}.gal-prev{left:12px}.gal-next{right:12px}.gal-nav[hidden]{display:none}
@@ -324,7 +328,7 @@ body[data-cols="3"] .name{font-size:10px;margin:6px 0 2px}
 body[data-cols="3"] .size{font-size:7.5px;margin-bottom:5px}
 body[data-cols="3"] .desc{font-size:7.5px;line-height:1.3;margin-bottom:7px}
 body[data-cols="3"] .price{font-size:10px;padding:5px 4px}
-.modal-thumbs{padding:12px 18px 0}.modal-meta{margin-bottom:12px}.gal-nav{width:34px;height:34px}.gal-prev{left:8px}.gal-next{right:8px}
+.modal-overlay{padding:12px}.product-modal{max-height:92vh;max-height:92dvh}.modal-thumbs{padding:12px 18px 0}.modal-meta{margin-bottom:12px}.gal-nav{width:34px;height:34px}.gal-prev{left:8px}.gal-next{right:8px}
 .state-box{padding:26px 8px}.state-title{font-size:21px}
 .card.is-skeleton .info{min-height:96px}
 body[data-cols="3"] .card-tag{font-size:8px;padding:3px 7px 3px 6px;left:5px;bottom:5px}body[data-cols="3"] .card-tag svg{display:none}
@@ -1258,16 +1262,29 @@ function setModalFavState(isFav, pending){
   modalFavLabel.textContent = pending ? 'Elige una opción' : isFav ? 'En tus favoritos' : 'Agregar a favoritos';
 }
 
+let galToken = 0;     // invalida cambios de foto anteriores si el usuario toca rápido otra opción
 function showGalleryImage(animate){
   const src = gallery.imgs[gallery.i];
-  const apply = ()=>{
+  const token = ++galToken;
+  const swap = ()=>{
+    if(token !== galToken) return;
     delete modalImg.dataset.fallback; delete modalImg.dataset.retry;
     modalPhoto.classList.toggle('is-placeholder', !src);
     modalImg.alt = gallery.name;
     modalImg.src = src || 'assets/logo-suprema.png';
     modalImg.classList.remove('is-swap');
   };
-  if(animate){ modalImg.classList.add('is-swap'); setTimeout(apply, 150); } else apply();
+  if(!animate || !src){ swap(); }
+  else {
+    // Primero se descarga y decodifica la foto nueva; solo entonces se hace el fundido. Así nunca se ve
+    // la foto anterior "saltar" a la nueva mientras esta termina de cargar. La foto vieja se queda hasta que la nueva está lista.
+    let fired = false;
+    const ready = ()=>{ if(fired || token !== galToken) return; fired = true; modalImg.classList.add('is-swap'); setTimeout(swap, 150); };
+    const pre = new Image();
+    pre.src = src;
+    (pre.decode ? pre.decode() : Promise.resolve()).then(ready, ready);
+    setTimeout(ready, 2500);                  // red muy lenta: se cambia igual y el aviso de error de la foto se encarga del resto
+  }
   [...modalThumbs.children].forEach((b,k)=>b.setAttribute('aria-current', k===gallery.i?'true':'false'));
   const next = gallery.imgs[(gallery.i+1) % gallery.imgs.length];
   if(next && gallery.imgs.length > 1) new Image().src = next;                // precarga la siguiente
