@@ -138,6 +138,13 @@ Documento de control para no repetir errores ya corregidos. Cada entrada indica 
 - **Detalle iOS:** los campos del pedido usan 16 px en celular; con menos, Safari hace zoom al enfocarlos.
 - **Lección:** al renombrar un sistema (favoritos→carrito) buscar también los nombres con mayúsculas intermedias (`updateFavBadge`): una llamada olvidada en `init()` dejó el catálogo sin cargar hasta que se detectó en la consola.
 
+## 22. Vista previa al compartir el enlace y favicon (2026-10-21)
+- **Qué se agregó (en `<head>` de `index.html`):** título y descripción, `og:*` y `twitter:*` (tarjeta grande), `canonical`, `theme-color` y los iconos. Archivos nuevos: `assets/og-image.jpg` (1200×630, 72 KB: logo sobre el fondo rosado del catálogo), `favicon.ico` (en la **raíz**, 16/32/48), `assets/favicon-32.png`, `assets/icon-192.png`, `assets/icon-512.png` y `assets/apple-touch-icon.png` (180).
+- **Decisión de diseño:** el logo completo es muy ancho y ilegible a 32 px, así que los iconos usan solo el **emblema de las hojas azules** del mismo logo, sobre un cuadrado rosa. La imagen de vista previa sí lleva el logo completo.
+- **Importante:** las URLs de `og:image` y `canonical` son **absolutas** y apuntan a `https://catalogo.supremenails.co/`. WhatsApp **guarda en caché** la vista previa de cada enlace: si se cambia la imagen, hay que probar con un enlace nuevo (por ejemplo añadiendo `?v=2`) o esperar.
+- **Despliegue:** `favicon.ico` vive en la raíz; al preparar la carpeta de despliegue incluirlo: `git archive main index.html favicon.ico assets`.
+- **Lección:** el archivo del logo trae su sombra recortada en el borde inferior; al reutilizarlo sobre otro fondo se ve un borde rectangular: difuminar el último 5 % del canal alfa.
+
 ---
 
 ## Reglas generales a respetar de aquí en adelante

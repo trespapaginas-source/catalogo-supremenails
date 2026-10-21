@@ -48,7 +48,7 @@ Reglas permanentes (también en `CLAUDE.md`):
 
 **Carrito (2026-10-21, pendiente de publicar en producción si no se indica lo contrario arriba):** los favoritos se sustituyeron por un **carrito con cantidades**: icono con animación hasta el primer toque, barra inferior con el total, panel con − 2 +, y pedido por WhatsApp («Hacer pedido por WhatsApp») con nombre y ciudad. La ciudad se sugiere con `functions/api/ciudad.js` (Pages Function; **se publica solo si se despliega desde la raíz del repo**). Detalle y decisiones en `NOTAS_CORRECCIONES.md` #21. Vista previa para probar en celular: `https://prueba.catalogo-supremenails.pages.dev`.
 
-Vista previa (misma versión): `https://prueba.catalogo-supremenails.pages.dev`. Para publicar de nuevo: carpeta temporal solo con `index.html` y `assets/` (`git archive main index.html assets`) y `wrangler pages deploy <carpeta> --project-name catalogo-supremenails --branch main`.
+Vista previa (misma versión): `https://prueba.catalogo-supremenails.pages.dev`. Para publicar de nuevo: carpeta temporal solo con `index.html` y `assets/` (`git archive main index.html favicon.ico assets`) y `wrangler pages deploy <carpeta> --project-name catalogo-supremenails --branch main`.
 
 ## 4. Fuente de datos oficial
 
