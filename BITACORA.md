@@ -1,7 +1,7 @@
 # Bitácora del proyecto — Catálogo Supreme Nails
 
 > Para retomar el trabajo en otro computador sin perder contexto.
-> Última actualización: **2026-10-20** (el catálogo que lee el Sheet ya está en `main` — commit `aac91cb` — y **publicado en producción**). Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
+> Última actualización: **2026-10-20** (el catálogo con lectura del Sheet, paginación y variantes ya está en `main` — commit `441d0b4` — y **publicado en producción**). Si algo de aquí contradice lo que ves en el código o en los paneles, **manda lo que ves** y corrige este documento.
 > Este repositorio es **público**: aquí no hay claves ni correos. Sí aparecen el ID de la Base de Google y el `gid` de su pestaña (`index.html`, constantes `SHEET_ID` y `SHEET_GID`): son necesarios para que la página lea el Sheet, que es **de solo lectura para el público**. Nadie puede editarlo ni borrarlo desde la página.
 
 Convención: **[VERIFICADO]** = se comprobó con una herramienta ese día. **[DECIDIDO]** = el dueño del proyecto lo decidió. **[PENDIENTE]** = falta decisión o acción.
@@ -31,7 +31,7 @@ Reglas permanentes (también en `CLAUDE.md`):
 
 ## 3. Estado actual del catálogo
 
-**Producción (`https://catalogo-supremenails.pages.dev`), publicada el 2026-10-20:** despliegue `25e38926` (commit `aac91cb`, rama `main`). Punto de retorno: el despliegue anterior `38f6aa42` (commit `0f60bdb`, 394 productos incrustados que leían de la CDN de Shopify); se restaura desde el panel de Cloudflare Pages → Despliegues → «Rollback» o volviendo a desplegar ese commit. **No se hizo `git push`** (Pages está sin conexión a GitHub: se sube por `wrangler pages deploy`).
+**Producción (`https://catalogo-supremenails.pages.dev`):** despliegue `88bde24c` (commit `441d0b4`, rama `main`, 2026-10-21: lectura del Sheet + paginación + variantes con opciones circulares). Puntos de retorno: `25e38926` (commit `aac91cb`, sin variantes) y `38f6aa42` (commit `0f60bdb`, 394 productos incrustados que leían de la CDN de Shopify); se restauran desde el panel de Cloudflare Pages → Despliegues → «Rollback» o volviendo a desplegar ese commit. `main` local va por delante de `origin/main` hasta que se haga `git push` (Pages está sin conexión a GitHub: se sube por `wrangler pages deploy`).
 
 **Desde el 2026-10-20 (rama `feat/catalogo-desde-sheet`, fusionada a `main` sin conflictos):** el catálogo **lee la Base de Google Sheets en vivo**. **[VERIFICADO]** en producción con la Base real: **995 productos** («Sí»), 12 categorías, todos con precio; consola sin errores; el dueño decidió dejar **visibles** `SEMIF006` a `SEMIF009`.
 - Muestra solo las filas con **«Visible en catálogo» = SI/Sí**. Precio = «Precio de venta 1». Fotos = «Enlace foto 1…8».
