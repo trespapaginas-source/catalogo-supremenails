@@ -132,6 +132,7 @@ button{border:0;background:none;cursor:pointer}
 .modal-desc{font-size:12.5px;line-height:1.55;color:#5f5b64;margin:0 0 18px}
 .modal-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .modal-price{font-size:22px;font-weight:500;color:var(--ink)}
+.price-from{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#75727b;margin-right:2px}
 .modal-fav-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:26px;background:#f4edf1;color:#5c5560;font-size:12px;letter-spacing:.03em;transition:background .2s ease,color .2s ease}
 .modal-fav-btn svg{width:16px;height:16px}
 .modal-fav-btn .heart-fill{opacity:0;transition:opacity .2s ease}
@@ -220,6 +221,44 @@ button{border:0;background:none;cursor:pointer}
 .pg-compact{display:none}
 .pager button:focus-visible{outline:2px solid #d19abb;outline-offset:2px}
 .card .size{min-height:1.25em}
+/* ---- productos con variantes: etiqueta en la tarjeta y selector en la ficha ---- */
+.card .photo{position:relative}
+.card-tag{position:absolute;left:7px;bottom:7px;z-index:1;display:inline-flex;align-items:center;gap:5px;padding:4px 9px 4px 7px;border-radius:20px;background:#ffffffeb;box-shadow:0 3px 8px #0000001a;font-size:9.5px;font-weight:600;letter-spacing:.04em;color:#a54c78;white-space:nowrap}
+.card-tag svg{width:11px;height:11px;flex:none}
+.card .price small{font-size:.6em;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-right:5px;opacity:.7}
+.modal-options{margin:2px 0 20px}
+.modal-options[hidden]{display:none}
+.mopt-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.mopt-head b{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:#75727b}
+.mopt-head span{font-size:11.5px;color:#75727b;transition:color .2s ease}
+.mopt-head span.is-on{color:#a54c78;font-weight:600}
+.mopt-wrap{position:relative}
+.mopt-grid{display:grid;gap:8px;list-style:none;margin:0;padding:2px 2px 4px}
+.mopt-grid.has-pics{grid-template-columns:repeat(auto-fill,minmax(58px,1fr))}
+.mopt-grid.only-codes{grid-template-columns:repeat(auto-fill,minmax(52px,1fr))}
+.mopt-wrap.is-long .mopt-grid{max-height:270px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#e0c6d4 transparent;padding-right:6px}
+.mopt-wrap.is-long::after{content:"";position:absolute;left:0;right:6px;bottom:0;height:30px;background:linear-gradient(0deg,#fff,#fff0);pointer-events:none;transition:opacity .2s ease}
+.mopt-wrap.is-long.at-end::after{opacity:0}
+.mopt{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;gap:5px;padding:5px 4px 6px;border-radius:12px;background:#faf5f8;border:1.5px solid transparent;transition:border-color .2s ease,background .2s ease,transform .15s ease;-webkit-tap-highlight-color:transparent}
+.mopt:hover{border-color:#ecd5e2}
+.mopt:active{transform:scale(.95)}
+.mopt:focus-visible{outline:2px solid #d19abb;outline-offset:2px}
+.mopt-th{width:100%;aspect-ratio:1/1;border-radius:8px;background:#f6f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mopt-th img{width:94%;height:94%;object-fit:contain}
+.mopt-th img.is-logo,.mopt-th.is-placeholder img{width:50%;height:auto;opacity:.4}
+.mopt-lb{font-size:10.5px;font-weight:500;letter-spacing:.05em;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.mopt.is-code{padding:10px 6px;border-radius:30px}
+.mopt.is-code .mopt-lb{font-size:12px}
+.mopt[aria-pressed="true"]{border-color:#d19abb;background:#fbeef4}
+.mopt[aria-pressed="true"] .mopt-lb{color:#a54c78;font-weight:600}
+.mopt-ck{position:absolute;top:-5px;right:-5px;width:17px;height:17px;border-radius:50%;background:#a54c78;color:#fff;display:none;align-items:center;justify-content:center;box-shadow:0 2px 6px #0003;z-index:1}
+.mopt[aria-pressed="true"] .mopt-ck{display:flex}
+.mopt-ck svg{width:9px;height:9px}
+.mopt-foot{margin:8px 0 0;font-size:10.5px;color:#75727b}
+.mopt-foot[hidden]{display:none}
+.modal-fav-btn:disabled{opacity:.55;cursor:default}
+/* con selector, el precio y favoritos quedan fijos al pie de la ficha */
+.product-modal.is-variants .modal-footer{position:sticky;bottom:0;z-index:2;background:#fff;margin:0 -26px -26px;padding:13px 26px 18px;border-top:1px solid #f1e6ec}
 /* ---- estados de error / vacío ---- */
 .state-box{grid-column:1/-1;margin:auto;max-width:400px;text-align:center;padding:34px 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
 .state-icon{width:56px;height:56px;border-radius:18px;background:linear-gradient(160deg,#f8e6f0,#f0d0e2);color:#a54c78;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px #a54c7826}
@@ -280,6 +319,8 @@ body[data-cols="3"] .price{font-size:10px;padding:5px 4px}
 .modal-thumbs{padding:12px 18px 0}.modal-meta{margin-bottom:12px}.gal-nav{width:34px;height:34px}.gal-prev{left:8px}.gal-next{right:8px}
 .state-box{padding:26px 8px}.state-title{font-size:21px}
 .card.is-skeleton .info{min-height:96px}
+body[data-cols="3"] .card-tag{font-size:8px;padding:3px 7px 3px 6px;left:5px;bottom:5px}body[data-cols="3"] .card-tag svg{display:none}
+.modal-options{margin-bottom:16px}
 body[data-cols="3"] .sk-code{height:12px}body[data-cols="3"] .sk-price{height:20px}
 .listing-head.search-active .listing-count{order:3;flex-basis:100%}
 .pager{flex-direction:column;align-items:stretch;gap:12px;margin:10px 0 30px;padding:0}
@@ -413,6 +454,7 @@ body[data-cols="1"] .desc{font-size:12px}
       <h2 class="modal-name" id="modalName"></h2>
       <p class="modal-size" id="modalSize"></p>
       <div class="modal-meta" id="modalMeta" hidden></div>
+      <div class="modal-options" id="modalOptions" hidden></div>
       <div class="modal-footer">
         <span class="modal-price" id="modalPrice"></span>
         <button class="modal-fav-btn" type="button" id="modalFavBtn">
@@ -460,7 +502,8 @@ const SHEET_ID = '1IFC2DnsP6_4mmy7uA76qCl4f3-SisPxRGg0Gq6nOQM8';
 const SHEET_GID = '1138861653';   // pestaña «Lis-de-Pro-y-Ser» (si se borra y recrea la pestaña, cambia este número)
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + SHEET_GID;
 const WHATSAPP_NUMBER = '573244156023';
-const CACHE_KEY = 'catalogCache_v1';
+const CACHE_KEY = 'catalogCache_v2';          // v2: las filas guardan «Código padre» y «Variante»
+const OLD_CACHE_KEYS = ['catalogCache_v1'];
 
 const normalize = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 
@@ -488,6 +531,7 @@ function parseCSV(text){
 const COLUMN_ALIASES = {
   sku:      ['codigo unico (sku)','sku','codigo unico'],
   parent:   ['codigo padre'],
+  variant:  ['variante'],
   name:     ['nombre'],
   category: ['categoria'],
   type:     ['tipo'],
@@ -620,18 +664,22 @@ function buildCatalog(rows){
   const {row, cols} = locateColumns(rows);
   const missing = REQUIRED_COLUMNS.filter(k => cols[k] === undefined);
   if(missing.length) throw new Error('Faltan columnas en el Sheet: ' + missing.join(', '));
-  const products = [], seen = new Set();
+  const products = [], seen = new Set(), heads = new Map(), withVisible = new Set();
   for(let i=row+1; i<rows.length; i++){
     const r = rows[i];
     const cell = k => cols[k] === undefined ? '' : String(r[cols[k]] ?? '').trim();
     const sku = cell('sku');
-    if(!sku || seen.has(sku) || !isYes(cell('visible'))) continue;
-    if(!/^[\w.\-]+$/.test(sku)){ console.warn('[catálogo] SKU ignorado por caracteres no válidos:', sku); continue; }
+    if(!sku) continue;
+    const visible = isYes(cell('visible'));
+    const parent = cell('parent') || sku;                                  // sin «Código padre» cada fila es su propio producto
+    const variante = cell('variant');
+    const isHead = !variante && parent.toUpperCase() === sku.toUpperCase();
+    if(!visible && !isHead) continue;                                      // una fila no visible solo importa si es el «padre» del grupo
+    if(!/^[\w.\-]+$/.test(sku)){ if(visible) console.warn('[catálogo] SKU ignorado por caracteres no válidos:', sku); continue; }
     const nameRaw = cell('name');
     if(!nameRaw) continue;
-    seen.add(sku);
-    products.push({
-      sku,
+    const item = {
+      sku, parent, variante,
       name: prettyName(nameRaw),
       catRaw: cell('category'),
       price: parsePrice(cell('price')),
@@ -639,15 +687,24 @@ function buildCatalog(rows){
       brand: prettyName(cell('brand')),
       tipo: prettyName(cell('type')),
       imgs: cols.photos.map(ci => cleanUrl(r[ci])).filter(Boolean)
-    });
+    };
+    if(visible){
+      if(seen.has(sku)) continue;
+      seen.add(sku); withVisible.add(parent.toUpperCase()); products.push(item);
+    }else if(!heads.has(parent.toUpperCase())){
+      heads.set(parent.toUpperCase(), {...item, vis:false});
+    }
   }
+  heads.forEach((h, key)=>{ if(withVisible.has(key) && !seen.has(h.sku)) products.push(h); });   // padres ocultos de grupos que sí se muestran
   return products;
 }
 /* </data-layer> */
 
 /* ---------- Estado del catálogo ---------- */
 let RAW = [];            // productos tal como salen del Sheet (es lo que se guarda en el celular)
-let PRODUCTS = [];       // productos listos para pintar
+let PRODUCTS = [];       // filas visibles (una por SKU): lo que usan favoritos y cotización
+let ITEMS = [];          // tarjetas del listado: una fila normal o un grupo con variantes
+let GROUP_BY_ID = new Map();
 let CATEGORIES = [];
 let catBySlug = {};
 let dataReady = false;
@@ -660,18 +717,27 @@ const ls = {
   set(k, v){ try{ localStorage.setItem(k, v); }catch{} }
 };
 function readCache(){
-  try{ const c = JSON.parse(ls.get(CACHE_KEY)); return c && c.v === 1 && Array.isArray(c.products) && c.products.length ? c.products : null; }
+  try{ const c = JSON.parse(ls.get(CACHE_KEY)); return c && c.v === 2 && Array.isArray(c.products) && c.products.length ? c.products : null; }
   catch{ return null; }
 }
-const writeCache = products => ls.set(CACHE_KEY, JSON.stringify({v:1, t:Date.now(), products}));
+const writeCache = products => ls.set(CACHE_KEY, JSON.stringify({v:2, t:Date.now(), products}));
 
 function setCatalog(raw){
   RAW = raw;
+  const heads = new Map(raw.filter(p=>p.vis === false).map(p=>[p.parent.toUpperCase(), p]));
+  PRODUCTS = raw.filter(p=>p.vis !== false).map(p=>({
+    ...p,
+    cat: catSlug(catKey(p.catRaw)),
+    img: p.imgs[0] || '',
+    q: normalize([p.name, p.sku, p.variante, p.brand, p.tipo].join(' '))
+  }));
+  ITEMS = buildItems(PRODUCTS, heads);
+  GROUP_BY_ID = new Map(ITEMS.filter(it=>it.kind === 'group').map(it=>[it.id, it]));
   const groups = new Map();
-  raw.forEach(p=>{
-    const meta = categoryMeta(p.catRaw);
+  ITEMS.forEach(it=>{
+    const meta = categoryMeta(it.catRaw);
     if(!groups.has(meta.key)) groups.set(meta.key, {...meta, slug: catSlug(meta.key), count: 0});
-    groups.get(meta.key).count++;
+    groups.get(meta.key).count++;                                          // «productos» = tarjetas, no filas
   });
   const known = Object.keys(CAT_META);
   CATEGORIES = [...groups.values()].sort((a,b)=>{
@@ -682,14 +748,68 @@ function setCatalog(raw){
     return a.label.localeCompare(b.label, 'es');
   });
   catBySlug = Object.fromEntries(CATEGORIES.map(c=>[c.slug, c]));
-  PRODUCTS = raw.map(p=>({
-    ...p,
-    cat: catSlug(catKey(p.catRaw)),
-    img: p.imgs[0] || '',
-    q: normalize([p.name, p.sku, p.brand, p.tipo].join(' '))
-  }));
   dataReady = true;
   preconnectPhotos(raw);
+}
+
+/* ---------- Productos con variantes ----------
+   Las filas con el mismo «Código padre» son un solo producto. La fila del padre (SKU = código padre, sin «Variante»)
+   aporta el título y la foto de la tarjeta; las demás son las opciones del selector. Reglas acordadas con el dueño:
+   - se muestra el producto si al menos una fila del grupo tiene «Sí»; el selector solo lista las filas con «Sí»;
+   - con menos de 2 opciones visibles no hay selector: sale la tarjeta normal de esa fila (la variante, o el padre si es la única). */
+const isHeadRow = p => !p.variante && p.parent.toUpperCase() === p.sku.toUpperCase();
+const STOP_WORDS = new Set(['de','del','al','con','y','por','para','a','en','x','el','la','los','las']);
+
+/* parte común de los nombres (palabras iguales desde el inicio), sin conectores sueltos al final */
+function commonTitle(names){
+  const w = names.map(n=>n.split(/\s+/));
+  const out = [];
+  for(let i=0; i<w[0].length; i++){
+    const t = w[0][i].toLowerCase();
+    if(w.every(x=>x[i] && x[i].toLowerCase() === t)) out.push(w[0][i]); else break;
+  }
+  while(out.length && (STOP_WORDS.has(out[out.length-1].toLowerCase()) || /^[\W_]+$/.test(out[out.length-1]))) out.pop();
+  return out.join(' ');
+}
+const sameValue = vals => vals.length && vals.every(v=>v === vals[0]) ? vals[0] : '';
+
+function groupItem(parent, head, opts){
+  const label = o => o.variante || o.sku.replace(new RegExp('^' + parent.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '[-_.]?', 'i'), '') || o.sku;
+  const options = opts.map(p=>({p, label: label(p)}));
+  let title = head ? head.name : commonTitle(opts.map(o=>o.name));
+  if(!head && title.split(/\s+/).length < 2) title = opts[0].name;           // sin parte común útil: el nombre de la primera variante
+  const cover = head && head.imgs.length ? head.imgs : (opts.find(o=>o.imgs.length) || {imgs:[]}).imgs;
+  const prices = opts.map(o=>o.price).filter(Boolean);
+  const price = prices.length ? Math.min(...prices) : 0;
+  const src = head || {brand: sameValue(opts.map(o=>o.brand)), tipo: sameValue(opts.map(o=>o.tipo))};
+  return {
+    kind:'group', id: parent, cat: opts[0].cat, catRaw: opts[0].catRaw,
+    title, imgs: cover, img: cover[0] || '',
+    price, priceFrom: new Set(prices).size > 1,
+    medida: head ? head.medida : sameValue(opts.map(o=>o.medida)),
+    brand: src.brand, tipo: src.tipo,
+    options,
+    q: normalize([title, parent].join(' ')) + ' ' + opts.map(o=>o.q).join(' ')   // se encuentra por cualquier código, nombre o variante
+  };
+}
+
+function buildItems(rows, heads){
+  const order = [], groups = new Map();
+  rows.forEach(p=>{
+    const key = p.parent.toUpperCase() + '|' + p.cat;
+    if(!groups.has(key)){ groups.set(key, []); order.push(key); }
+    groups.get(key).push(p);
+  });
+  return order.map(key=>{
+    const members = groups.get(key);
+    const opts = members.filter(p=>!isHeadRow(p));
+    if(opts.length >= 2){
+      const head = members.find(isHeadRow) || heads.get(members[0].parent.toUpperCase());
+      return groupItem(members[0].parent, head, opts);
+    }
+    const p = opts[0] || members[0];
+    return {kind:'row', id:p.sku, cat:p.cat, catRaw:p.catRaw, p, q:p.q};
+  });
 }
 
 /* abre la conexión con el servidor de fotos antes de que haga falta (ahorra el saludo TLS en la primera foto) */
@@ -768,7 +888,7 @@ function renderLoadError(){
 /* ---------- Fotos: aparecen con suavidad y nunca se ve una imagen rota ---------- */
 function markReady(img){ const box = img.closest('.photo'); if(box) box.classList.add('is-ready'); }
 function onImageError(img){
-  const box = img.closest('.photo, .modal-photo');
+  const box = img.closest('.photo, .modal-photo, .mopt-th');
   if(!box || img.dataset.fallback) return;
   if(!img.dataset.retry){                      // un solo reintento por si el servidor de fotos estaba ocupado
     img.dataset.retry = '1';
@@ -787,15 +907,29 @@ document.addEventListener('error', e=>{ if(e.target instanceof HTMLImageElement)
 document.addEventListener('load', e=>{ if(e.target instanceof HTMLImageElement) markReady(e.target); }, true);
 
 /* ---------- Tarjetas ---------- */
-function cardHtml(p, {asRemove=false}={}){
+const GROUP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="4.2"/><circle cx="16" cy="9" r="4.2"/><circle cx="12" cy="15.5" r="4.2"/></svg>';
+const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
+function cardHtml(p, {asRemove=false, group=false}={}){
   const fav = favorites.has(p.sku);
-  const heartBtn = asRemove
+  const tag = group ? `<span class="card-tag">${GROUP_ICON}${p.nOpts} opciones</span>` : '';
+  const price = (group && p.priceFrom && p.price ? '<small>Desde</small>' : '') + fmtPrice(p.price);
+  const heartBtn = group
+    ? `<button class="card-fav card-pick" type="button" data-group="${escapeHtml(p.sku)}" aria-label="Elegir una opción">${heartSvg()}</button>`
+    : asRemove
     ? `<button class="card-remove" type="button" data-sku="${p.sku}" aria-label="Quitar de favoritos">${heartSvg()}</button>`
     : `<button class="card-fav${fav?' is-fav':''}" type="button" data-sku="${p.sku}" aria-label="${fav?'Quitar de favoritos':'Agregar a favoritos'}">${heartSvg()}</button>`;
   const photo = p.img
-    ? `<div class="photo"><img src="${escapeHtml(p.img)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" width="400" height="400"></div>`
-    : `<div class="photo is-placeholder is-ready"><img src="assets/logo-suprema.png" alt=""></div>`;
-  return `<article class="card" data-sku="${p.sku}">${heartBtn}${photo}<div class="info"><span class="code-row"><span class="code">${p.sku}</span></span><h2 class="name">${escapeHtml(p.name)}</h2><p class="size">${escapeHtml(p.medida)}</p><span class="price">${fmtPrice(p.price)}</span></div></article>`;
+    ? `<div class="photo"><img src="${escapeHtml(p.img)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" width="400" height="400">${tag}</div>`
+    : `<div class="photo is-placeholder is-ready"><img src="assets/logo-suprema.png" alt="">${tag}</div>`;
+  const id = group ? `data-group="${escapeHtml(p.sku)}"` : `data-sku="${p.sku}"`;
+  return `<article class="card" ${id}>${heartBtn}${photo}<div class="info"><span class="code-row"><span class="code">${escapeHtml(p.sku)}</span></span><h2 class="name">${escapeHtml(p.name)}</h2><p class="size">${escapeHtml(p.medida)}</p><span class="price">${price}</span></div></article>`;
+}
+
+/* una tarjeta del listado: una fila normal o un producto con variantes */
+function itemCardHtml(it){
+  if(it.kind === 'row') return cardHtml(it.p);
+  return cardHtml({sku:it.id, name:it.title, img:it.img, medida:it.medida, price:it.price, priceFrom:it.priceFrom, nOpts:it.options.length}, {group:true});
 }
 
 /* ---------- Listado de una categoría: paginado ----------
@@ -851,7 +985,7 @@ function drawListing(){
     return;
   }
   const start = (view.page-1) * PRODUCTOS_POR_PAGINA;
-  catGrid.innerHTML = view.items.slice(start, start + PRODUCTOS_POR_PAGINA).map(p=>cardHtml(p)).join('');
+  catGrid.innerHTML = view.items.slice(start, start + PRODUCTOS_POR_PAGINA).map(itemCardHtml).join('');
   hydrateImages(catGrid);
   sizePhotos([...catGrid.children]);
   renderPager();
@@ -917,7 +1051,7 @@ function renderCategory(slug, {soft=false, page=1}={}){
     sizePhotos();
     return true;
   }
-  view.all = PRODUCTS.filter(p=>p.cat === slug);
+  view.all = ITEMS.filter(it=>it.cat === slug);
   if(!soft){ view.query = ''; view.page = page; }
   else view.query = searchQuery();
   view.items = view.query ? filterItems(view.all, view.query) : view.all;
@@ -1055,6 +1189,7 @@ function flyToFavorites(fromEl){
 }
 
 function toggleFavorite(sku, sourceEl){
+  if(!sku) return;
   const wasFav = favorites.has(sku);
   if(wasFav) favorites.delete(sku);
   else favorites.add(sku);
@@ -1081,6 +1216,7 @@ function attachGridEvents(grid){
     const removeBtn = e.target.closest('.card-remove');
     const card = e.target.closest('.card');
     if(!card || card.classList.contains('is-skeleton')) return;
+    if(card.dataset.group){ openProductModal(null, card.dataset.group); return; }     // producto con variantes: el corazón también abre la ficha para elegir
     const sku = card.dataset.sku;
     if(favBtn){ toggleFavorite(sku, favBtn); return; }
     if(removeBtn){ removeFavoriteCard(card, sku); return; }
@@ -1108,9 +1244,10 @@ const galPrev = document.getElementById('galPrev');
 const galNext = document.getElementById('galNext');
 let gallery = {imgs:[], i:0, name:''};
 
-function setModalFavState(isFav){
-  modalFavBtn.classList.toggle('is-fav', isFav);
-  modalFavLabel.textContent = isFav ? 'En tus favoritos' : 'Agregar a favoritos';
+function setModalFavState(isFav, pending){
+  modalFavBtn.disabled = !!pending;
+  modalFavBtn.classList.toggle('is-fav', !pending && isFav);
+  modalFavLabel.textContent = pending ? 'Elige una opción' : isFav ? 'En tus favoritos' : 'Agregar a favoritos';
 }
 
 function showGalleryImage(animate){
@@ -1135,31 +1272,104 @@ function stepGallery(d){
 }
 function goGallery(i){ if(i !== gallery.i){ gallery.i = i; showGalleryImage(true); } }
 
-function openProductModal(sku){
-  const p = PRODUCTS.find(x=>x.sku===sku);
-  if(!p) return;
-  modalOverlay.dataset.sku = sku;
-  gallery = {imgs: p.imgs.length ? p.imgs : [''], i:0, name:p.name};
-  const multi = p.imgs.length > 1;
+/* pinta la ficha con los datos de una fila o de un grupo */
+function fillModal(d, animate){
+  gallery = {imgs: d.imgs.length ? d.imgs : [''], i:0, name:d.name};
+  const multi = d.imgs.length > 1;
   galPrev.hidden = galNext.hidden = !multi;
   modalThumbs.hidden = !multi;
-  modalThumbs.innerHTML = multi ? p.imgs.map((u,k)=>`<button type="button" data-i="${k}" aria-label="Ver foto ${k+1}"><img src="${escapeHtml(u)}" alt="" loading="lazy"></button>`).join('') : '';
-  showGalleryImage(false);
-  document.getElementById('modalCode').textContent = p.sku;
-  document.getElementById('modalName').textContent = p.name;
-  document.getElementById('modalSize').textContent = p.medida || '';
-  const catLabel = normalize((catBySlug[p.cat]||{}).label);
-  const chips = [p.brand, p.tipo].filter((v,k,a)=> v && normalize(v)!==catLabel && a.indexOf(v)===k);
+  modalThumbs.innerHTML = multi ? d.imgs.map((u,k)=>`<button type="button" data-i="${k}" aria-label="Ver foto ${k+1}"><img src="${escapeHtml(u)}" alt="" loading="lazy"></button>`).join('') : '';
+  showGalleryImage(animate);
+  document.getElementById('modalCode').textContent = d.code;
+  document.getElementById('modalName').textContent = d.name;
+  document.getElementById('modalSize').textContent = d.medida || '';
+  const catLabel = normalize((catBySlug[d.cat]||{}).label);
+  const chips = [d.brand, d.tipo].filter((v,k,a)=> v && normalize(v)!==catLabel && a.indexOf(v)===k);
   const meta = document.getElementById('modalMeta');
   meta.innerHTML = chips.map(c=>`<span class="meta-chip">${escapeHtml(c)}</span>`).join('');
   meta.hidden = !chips.length;
-  document.getElementById('modalPrice').textContent = fmtPrice(p.price);
+  document.getElementById('modalPrice').innerHTML = (d.priceFrom && d.price ? '<small class="price-from">Desde</small> ' : '') + fmtPrice(d.price);
+}
+
+function openProductModal(sku, groupId){
+  if(groupId){ openGroupModal(groupId); return; }
+  const p = PRODUCTS.find(x=>x.sku===sku);
+  if(!p) return;
+  modalGroup = null;
+  modalOverlay.querySelector('.product-modal').classList.remove('is-variants');
+  modalOptions.hidden = true; modalOptions.innerHTML = '';
+  modalOverlay.dataset.sku = sku;
+  fillModal({code:p.sku, name:p.name, medida:p.medida, brand:p.brand, tipo:p.tipo, cat:p.cat, price:p.price, imgs:p.imgs}, false);
   setModalFavState(favorites.has(sku));
   modalOverlay.classList.add('is-open');
   document.body.style.overflow = 'hidden';
 }
 
+/* ---------- Ficha de un producto con variantes ----------
+   Sin opción elegida se ve la foto del producto; al elegir una cambian foto, código, nombre y precio, y el botón de
+   favoritos guarda ESA variante (cada una conserva su SKU real). Tocar de nuevo la opción vuelve a la foto del producto. */
+const MINIATURAS_HASTA = 12;      // hasta aquí cada opción lleva una foto pequeña; con más, solo el código (menos descargas pesadas)
+const modalOptions = document.getElementById('modalOptions');
+let modalGroup = null;            // {item, sel}  (sel = índice de la opción elegida, -1 ninguna)
+
+function optionsHtml(it){
+  const n = it.options.length, pics = n <= MINIATURAS_HASTA;
+  const tiles = it.options.map((o,i)=>{
+    const img = o.p.imgs[0];
+    const th = pics ? `<span class="mopt-th">${img ? `<img src="${escapeHtml(img)}" alt="" loading="lazy" decoding="async" width="96" height="96">` : '<img class="is-logo" src="assets/logo-suprema.png" alt="">'}</span>` : '';
+    return `<li><button class="mopt${pics ? '' : ' is-code'}" type="button" data-i="${i}" aria-pressed="false" aria-label="Opción ${escapeHtml(o.label)}"><span class="mopt-ck">${CHECK_ICON}</span>${th}<span class="mopt-lb">${escapeHtml(o.label)}</span></button></li>`;
+  }).join('');
+  return `<div class="mopt-head"><b>Opciones · ${n}</b><span id="moptState">Elige una opción</span></div>`
+    + `<div class="mopt-wrap${n > 12 ? ' is-long' : ''}" id="moptWrap"><ul class="mopt-grid ${pics ? 'has-pics' : 'only-codes'}" id="moptGrid" role="group" aria-label="Opciones del producto">${tiles}</ul></div>`
+    + (n > 12 ? '<p class="mopt-foot" id="moptFoot" hidden>Desliza para ver todas las opciones</p>' : '');
+}
+
+function showGroupView(animate){
+  const it = modalGroup.item, o = modalGroup.sel >= 0 ? it.options[modalGroup.sel].p : null;
+  const cover = it.imgs;
+  fillModal(o
+    ? {code:o.sku, name:o.name, medida:o.medida, brand:o.brand, tipo:o.tipo, cat:o.cat, price:o.price, imgs:o.imgs.length ? o.imgs : cover}
+    : {code:it.id, name:it.title, medida:it.medida, brand:it.brand, tipo:it.tipo, cat:it.cat, price:it.price, priceFrom:it.priceFrom, imgs:cover}, animate);
+  modalOverlay.dataset.sku = o ? o.sku : '';
+  setModalFavState(o ? favorites.has(o.sku) : false, !o);
+  const st = document.getElementById('moptState');
+  st.textContent = o ? 'Elegida: ' + it.options[modalGroup.sel].label : 'Elige una opción';
+  st.classList.toggle('is-on', !!o);
+}
+
+function openGroupModal(id){
+  const it = GROUP_BY_ID.get(id);
+  if(!it) return;
+  modalGroup = {item: it, sel: -1};
+  modalOverlay.querySelector('.product-modal').classList.add('is-variants');
+  modalOverlay.querySelector('.product-modal').scrollTop = 0;
+  modalOptions.innerHTML = optionsHtml(it);
+  modalOptions.hidden = false;
+  showGroupView(false);
+  modalOverlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+  const grid = document.getElementById('moptGrid'), wrap = document.getElementById('moptWrap'), foot = document.getElementById('moptFoot');
+  if(wrap.classList.contains('is-long')){
+    const upd = ()=>{
+      const over = grid.scrollHeight > grid.clientHeight + 4;
+      wrap.classList.toggle('at-end', !over || grid.scrollTop + grid.clientHeight >= grid.scrollHeight - 4);
+      if(foot) foot.hidden = !over;
+    };
+    grid.addEventListener('scroll', upd, {passive:true});
+    requestAnimationFrame(upd);
+  }
+}
+
+function selectOption(i){
+  if(!modalGroup) return;
+  modalGroup.sel = modalGroup.sel === i ? -1 : i;
+  modalOptions.querySelectorAll('.mopt').forEach((b,k)=>b.setAttribute('aria-pressed', k === modalGroup.sel));
+  showGroupView(true);
+}
+modalOptions.addEventListener('click', e=>{ const b = e.target.closest('.mopt'); if(b) selectOption(+b.dataset.i); });
+
 function closeProductModal(){
+  modalGroup = null;
   modalOverlay.classList.remove('is-open');
   document.body.style.overflow = '';
 }
@@ -1369,6 +1579,7 @@ document.addEventListener('visibilitychange', ()=>{
 });
 
 async function init(){
+  OLD_CACHE_KEYS.forEach(k=>{ try{ localStorage.removeItem(k); }catch{} });     // limpia el caché de la versión anterior
   updateFavBadge();
   const cached = readCache();
   if(cached) setCatalog(cached);

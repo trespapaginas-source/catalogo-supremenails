@@ -40,6 +40,7 @@ Reglas permanentes (también en `CLAUDE.md`):
 - Listado **paginado de 24 en 24** (`PRODUCTOS_POR_PAGINA` en `index.html`): solo se dibujan y piden foto las tarjetas de la página actual; la página va en la URL (`#/gel/2`, `#/gel` = página 1) y el botón «atrás», recargar y compartir el enlace la conservan; controles de página debajo de la lista (versión compacta «Página 2 de 12» en celular). Ver `NOTAS_CORRECCIONES.md` #17.
 - Ficha de producto con galería (flechas, miniaturas y deslizar), etiquetas de marca y tipo; foto de reemplazo con el logo si falta o falla; precio «Consultar» si no hay precio.
 - Botón «atrás» del celular: vuelve a las categorías en vez de sacar de la página; cada categoría tiene enlace directo (`#/gel`).
+- **Productos con variantes (2026-10-21):** una sola tarjeta por «Código padre» con etiqueta «N opciones»; la ficha tiene un selector (foto pequeña + código por opción hasta 12 opciones; solo código con más) y cambia foto, nombre, código y precio al elegir. Reglas completas en `NOTAS_CORRECCIONES.md` #18. Las líneas `SEMICH…` (Charlotte) y `SEMIKN…` (Kinails) **no se agrupan** por decisión del dueño.
 - Buscador por varias palabras, sin tildes ni mayúsculas, por nombre, marca, tipo y código; recorre **todos** los productos de la categoría (no solo la página visible) y pagina sus resultados igual (24 por página, «N resultados»).
 - Nombres presentados en formato título con tildes (ver `NOTAS_CORRECCIONES.md` #15).
 - Favoritos: se limpian solos si el producto deja de estar visible; se corrigió el contador al recargar.
